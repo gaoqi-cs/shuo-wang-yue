@@ -148,7 +148,7 @@ function resolveRound(){
   else {const valid=contenders.filter(p=>scoredPower(p)<=game.moonLimit);const pool=valid.length?valid:contenders;if(valid.length){const best=Math.max(...pool.map(scoredPower));winners=pool.filter(p=>scoredPower(p)===best);}else{const darkSorted=[...pool].sort((a,b)=>b.hidden.value-a.hidden.value||b.visible.value-a.visible.value);winners=darkSorted.length?[darkSorted[0]]:[];game.allBustDarkTie=true;}}
   if(!winners.length)winners=[game.earlyWinner||game.lastSolvent||game.players[0]];
   const overLimit=game.round>4?contenders.filter(p=>scoredPower(p)>game.moonLimit):[];overLimit.forEach(p=>{if(!winners.includes(p)){p.roundEliminated=true;p.folded=true;p.pendingOut=false;p.status='本回合蚀月';}else{p.status='蚀月暗牌胜出';}});
-  game.players.filter(p=>p.pendingOut).forEach(p=>{if(winners.includes(p)&&!p.out){p.pendingOut=false;p.status='道尽但守住'}else{p.pendingOut=false;p.out=true;p.folded=true;p.status='道尽淘汰';}});
+  game.players.filter(p=>p.pendingOut).forEach(p=>{if(winners.includes(p)&&!p.out){p.pendingOut=false;p.status='道尽获胜·保留资格'}else{p.pendingOut=false;p.out=true;p.folded=true;p.status='道尽淘汰';}});
   game.pendingDuel=false;
   winners=winners.filter(p=>!p.out&&!p.folded);if(!winners.length)winners=[...game.players.filter(p=>!p.out&&!p.folded)].slice(0,1);if(!winners.length)winners=[game.players[0]];
   const human=game.players[0];if(game.riskActive&&(!winners.includes(human)||human.out)){distributeRiskDao(human);game.riskActive=false;}
@@ -174,7 +174,7 @@ const tutorialSteps=[
   {title:'朔月逐强',body:'第 1 至 4 回合，三张牌的牌力总和越大越强。若总和相同，则先比较暗牌，再比较明牌。',demo:'朔月：总和越大，牌组越强'},
   {title:'满月忌盈',body:'第 5 至 8 回合会公布当回合月限，最接近且不超过月限者获胜。超过月限会成为蚀月并失去通常的摊牌资格。',demo:'满月：月限依次为 44、48、52、56'},
   {title:'把选择留到关键处',body:'每局有两次“易牌”，只能在本回合首次下注前更换明牌。下注依席位轮流进行，可持续加注，直到所有人跟住或弃权。',demo:'易牌 × 2　·　加注次数不限'},
-  {title:'守住最后的道',body:'可用的道降到 0 会立即出局，弃权也不会退回已经投入月盘的道。若其他角色都已道尽，最后仍持有道的人直接赢得整局。',demo:'道 = 0 → 出局'},
+  {title:'守住最后的道',body:'可用的道降到 0 会进入“道尽·待判”，你仍参与本回合拼点。若赢得本回合月盘则保留资格；若没有赢得道，则在回合结束时直接淘汰。',demo:'道尽 → 拼点 → 胜者保留，败者淘汰'},
   {title:'满月技能牌',body:'第 5 至 8 回合，轮到你时可以抽取一次技能：易牌、换牌、透视、加牌或送牌。技能会改变信息与牌组，也可能让总和超过当回合月限。',demo:'满月回合 · 每回合抽取一次'}
 ];
 let tutorialIndex=0;

@@ -1,0 +1,177 @@
+#motion-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#app { z-index: 1; }
+
+#login-screen .brand-lockup,
+#login-screen .login-actions { position: relative; z-index: 3; }
+#login-screen .version { z-index: 3; }
+#select-screen .select-layout { position: relative; z-index: 3; }
+
+.motion-silk {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: .36;
+  transition: opacity .7s var(--ease-out);
+}
+
+.motion-silk i {
+  position: absolute;
+  left: -18vw;
+  width: 136vw;
+  height: 22vh;
+  border-radius: 50%;
+  border-top: 1px solid rgba(201, 220, 208, .16);
+  filter: blur(1px);
+  transform: rotate(-7deg);
+  animation: silkThread 18s ease-in-out infinite alternate;
+}
+
+.motion-silk i:nth-child(1) { top: 18%; }
+.motion-silk i:nth-child(2) { top: 42%; animation-delay: -7s; animation-duration: 24s; opacity: .7; }
+.motion-silk i:nth-child(3) { top: 67%; animation-delay: -13s; animation-duration: 28s; opacity: .45; }
+
+@keyframes silkThread {
+  to { transform: translate3d(8vw, 3vh, 0) rotate(-3deg) scaleY(1.18); }
+}
+
+/* React Bits-inspired spotlight surfaces, adapted to the lacquer-and-moonlight palette. */
+.setup-panel, dialog, .seat {
+  --spot-x: 50%;
+  --spot-y: 50%;
+}
+
+.setup-panel.rb-spotlight, dialog.rb-spotlight {
+  background-image: radial-gradient(260px circle at var(--spot-x) var(--spot-y), rgba(234, 211, 141, .13), transparent 58%);
+}
+
+.seat.rb-spotlight .seat-avatar {
+  background-image: radial-gradient(72px circle at var(--spot-x) var(--spot-y), rgba(238, 218, 151, .24), transparent 68%);
+}
+
+/* Glare follows the pointer without changing card layout. */
+.rb-glare {
+  position: absolute;
+  z-index: 8;
+  inset: -35%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(112deg, transparent 35%, rgba(255, 250, 218, .08) 43%, rgba(255, 250, 218, .48) 49%, rgba(255,255,255,.1) 55%, transparent 64%);
+  transform: translateX(var(--glare-shift, -55%)) rotate(4deg);
+  transition: opacity .2s, transform .32s var(--ease-out);
+  mix-blend-mode: screen;
+}
+
+.card:hover > .rb-glare { opacity: .62; }
+
+/* Magnet uses individual translate so existing transforms remain intact. */
+.rb-magnet {
+  --mag-x: 0px;
+  --mag-y: 0px;
+  translate: var(--mag-x) var(--mag-y);
+  transition: translate .2s var(--ease-out), transform .22s var(--ease-out), border-color .22s, box-shadow .22s;
+}
+
+/* Electric border is reserved for consequential actions and pending-out states. */
+.action-bar .risk-action:not(:disabled),
+.action-bar .all-in:not(:disabled),
+.seat.pending-out .seat-avatar {
+  animation: electricPulse 1.6s ease-in-out infinite;
+}
+
+.action-bar .risk-action:not(:disabled), .action-bar .all-in:not(:disabled) {
+  background:
+    linear-gradient(#351a17, #1a1210) padding-box,
+    conic-gradient(from var(--electric-angle, 0deg), #7e382e, #ffd083, #d85f49, #fff0b2, #7e382e) border-box;
+  border: 1px solid transparent;
+}
+
+@property --electric-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes electricPulse {
+  0% { --electric-angle: 0deg; filter: brightness(.9); }
+  50% { filter: brightness(1.18); box-shadow: 0 0 18px rgba(222, 108, 77, .26); }
+  100% { --electric-angle: 360deg; filter: brightness(.9); }
+}
+
+/* Blur Text and Shiny Text are tied to announcements and decisive results. */
+.announcement.show { animation: announce 2.8s var(--ease), reactBitsBlurText 2.8s var(--ease-out); }
+.full-moon-cinema.active p { animation: cinemaText 6.3s var(--ease) forwards, reactBitsCinemaBlur 6.3s var(--ease) forwards; }
+.full-moon-cinema.active small { animation: cinemaText 6.3s .35s var(--ease) forwards, reactBitsCinemaBlur 6.3s .35s var(--ease) forwards; }
+
+@keyframes reactBitsBlurText {
+  0%, 100% { opacity: 0; filter: blur(10px); }
+  17%, 78% { opacity: 1; filter: blur(0); }
+}
+
+@keyframes reactBitsCinemaBlur {
+  0%, 27%, 86%, 100% { filter: blur(12px); }
+  39%, 74% { filter: blur(0); }
+}
+
+#result-title {
+  color: #f2edcf;
+  animation: resultShine 4.8s ease-in-out infinite;
+}
+
+@keyframes resultShine {
+  0%, 24%, 100% { color: #d8d4ba; text-shadow: 0 8px 28px rgba(0,0,0,.42); }
+  48% { color: #fff8cf; text-shadow: -12px 0 20px rgba(255,239,169,.18), 0 8px 28px rgba(0,0,0,.42); }
+  70% { color: #ead38d; text-shadow: 12px 0 22px rgba(255,239,169,.22), 0 8px 28px rgba(0,0,0,.42); }
+}
+
+.click-spark {
+  position: fixed;
+  z-index: 120;
+  left: var(--spark-x);
+  top: var(--spark-y);
+  width: 6px;
+  height: 6px;
+  pointer-events: none;
+}
+
+.click-spark i {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 2px;
+  height: 15px;
+  border-radius: 2px;
+  background: linear-gradient(#fff7c9, #d89b4d, transparent);
+  transform-origin: 1px 0;
+  transform: rotate(calc(var(--spark-i) * 45deg)) translateY(-4px);
+  animation: sparkRay .52s ease-out forwards;
+}
+
+@keyframes sparkRay {
+  from { opacity: 1; scale: 1 .35; }
+  to { opacity: 0; scale: .45 1.35; translate: 0 -14px; }
+}
+
+.full-phase + .motion-silk, body:has(#game-screen.full-phase.active) .motion-silk { opacity: .58; }
+
+@media (max-width: 760px) {
+  .motion-silk i:nth-child(3) { display: none; }
+  .motion-silk { opacity: .24; }
+  .setup-panel.rb-spotlight, dialog.rb-spotlight { background-image: none; }
+  .rb-magnet { translate: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #motion-backdrop, .motion-silk, .rb-glare, .click-spark { display: none; }
+  #result-title { color: #f2edcf; }
+  .action-bar .risk-action, .action-bar .all-in, .seat.pending-out .seat-avatar { animation: none !important; }
+}

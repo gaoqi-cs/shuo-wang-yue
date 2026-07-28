@@ -8,11 +8,15 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="table-theme.css?v=3">
   <link rel="stylesheet" href="cinema-fix.css?v=1">
+  <link rel="stylesheet" href="ui-polish.css?v=2">
+  <link rel="stylesheet" href="motion-effects.css?v=2">
 </head>
 <body>
   <canvas id="sky" aria-hidden="true"></canvas>
 
   <main id="app">
+    <canvas id="motion-backdrop" aria-hidden="true"></canvas>
+    <div class="motion-silk" aria-hidden="true"><i></i><i></i><i></i></div>
     <section class="screen active" id="login-screen">
       <div class="brand-lockup">
         <div class="moon-mark"><span></span></div>
@@ -93,7 +97,7 @@
       <div class="announcement" id="announcement"></div>
       <div class="game-board" id="game-board">
         <div class="full-moon-cinema" id="full-moon-cinema" aria-hidden="true"><div class="cinema-moon"><i></i></div><p>满月升起</p><small>月律改变 · 月限已启</small></div>
-        <div class="court-decor" aria-hidden="true"><i class="lantern left"></i><i class="lantern right"></i><span class="balustrade"></span></div>
+        <div class="court-decor" aria-hidden="true"><i class="lantern left"></i><i class="lantern right"></i><span class="moon-gate"></span><span class="cloud-band"></span><span class="balustrade"></span></div>
         <div class="seats" id="seats"></div>
         <div class="moon-table">
           <div class="public-zone">
@@ -101,6 +105,7 @@
             <div class="card public-card" id="public-card"></div>
           </div>
           <div class="pot-core"><small>月盘</small><strong id="pot-value">0</strong><span>道</span></div>
+          <i class="table-seal" aria-hidden="true">月</i>
           <div class="dao-pile" id="dao-pile"></div>
         </div>
       </div>
@@ -118,7 +123,7 @@
         <button class="skill-action" data-action="skill" id="skill-action">抽技能</button>
         <button class="risk-action" data-action="risk" id="risk-action">赌命</button>
         <div class="raise-control"><button data-action="raise">加注</button><input id="raise-amount" type="range" min="1" max="3" value="1"><b id="raise-label">+1</b></div>
-        <button class="all-in" data-action="allin" title="道降至零将立即出局">尽数投入 · 出局</button>
+        <button class="all-in" data-action="allin" title="道尽后参与本回合拼点，未获胜则回合结束时淘汰">尽数投入 · 待判</button>
       </div>
     </section>
 
@@ -145,6 +150,7 @@
   <dialog id="skill-dialog" class="skill-dialog"><p class="eyebrow">满月技能</p><h2 id="skill-title"></h2><div id="skill-art"></div><p id="skill-description"></p><div id="skill-targets"></div><div class="skill-actions"><button class="secondary" id="skill-discard">放弃此牌</button><button class="primary" id="skill-confirm">确认</button></div></dialog>
   <dialog id="risk-dialog" class="skill-dialog"><p class="eyebrow">满月赌命</p><h2>选择赌命方向</h2><p>方向只对你可见。当前回合结算时总点数会加 10 或减 10；之后每回合都必须获胜，否则直接淘汰并均分剩余道。</p><div class="skill-actions"><button class="secondary" data-risk="-10">赌命 · -10</button><button class="primary" data-risk="10">赌命 · +10</button></div></dialog>
   <dialog id="swap-dialog" class="skill-dialog"><p class="eyebrow">朔月易牌</p><h2>选择要更换的牌</h2><p>本局剩余 <b id="swap-dialog-count">2</b> 次机会。</p><div class="skill-actions"><button class="secondary" data-swap-zone="visible">更换明牌</button><button class="primary" data-swap-zone="hidden">更换暗牌</button></div></dialog>
-  <script src="game.js?v=3"></script>
+  <script src="game.js?v=4"></script>
+  <script src="motion-effects.js?v=2"></script>
 </body>
 </html>

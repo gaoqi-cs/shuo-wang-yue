@@ -117,7 +117,7 @@ python -m http.server 4317 --bind 127.0.0.1
 - 弃权不会退回本回合已经投入桌面的道。
 - 出局者后续回合不再行动。
 - 场上只剩一名仍持有道的角色时，该角色提前赢得整局。
-- “尽数投入”会使道归零，因此按钮明确标注会导致出局。
+- “尽数投入”会使道归零并进入“道尽·待判”，按钮必须明确标注为待判，而不是立即出局。
 
 不要恢复旧设计中的残月道或自动补充筹码。
 
@@ -248,7 +248,7 @@ node --check game.js
 - 第五回合月相与技能是否切换
 - 无限加注是否最终收敛
 - 弃权后已下注道是否留在月盘
-- 道归零是否立即出局
+- 道归零后是否进入待判，并在未赢得本回合月盘时于回合结束淘汰
 - 只剩一人持有道时是否提前结束
 - 所有满月技能是否正确改变目标和牌力
 - 摊牌说明是否与实际判定一致
@@ -270,3 +270,13 @@ node --check game.js
 - 规则判定与视觉动画保持分离，赢家不能由动画位置决定。
 - 修改规则时同步更新教程、侧栏说明、摊牌文案和本文件。
 - 新增长期机制后，必须把最新规则补充进本文件，保证下一次会话能够恢复完整上下文。
+
+## 2026-07-28 visual system update
+
+- `ui-polish.css` is the final visual override layer and must load after `cinema-fix.css`.
+- `design-system/shuo-wang-yue/MASTER.md` records the authoritative tokens, color roles, motion rules, and responsive constraints.
+- The visual direction is premium Chinese moonlit courtyard: ink jade, moon silver, lantern gold, and restrained cinnabar danger states.
+- Keep the project dependency-free. Do not add remote fonts, icon CDNs, or visual libraries for routine polish.
+- Preview the current project at `http://127.0.0.1:4321/`.
+- Eastern motion motifs live in `ui-polish.css`: moon-gate/cloud silhouettes, lake ripples, lantern sway, lunar pot dial, current-turn light, full-moon acceleration, and the table seal. Keep them CSS-only and preserve reduced-motion support.
+- React Bits-inspired motion is implemented locally in `motion-effects.css` and `motion-effects.js`; no React dependency is used. The shared Canvas renders aurora, full-moon rays and particles, while delegated pointer events provide spotlight, glare, magnet and click-spark feedback.
