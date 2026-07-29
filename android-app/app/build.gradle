@@ -1,0 +1,45 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace 'com.shuowangyue.game'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.shuowangyue.game'
+        minSdk 23
+        targetSdk 35
+        versionCode 1
+        versionName '0.1-demo'
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.demo'
+            versionNameSuffix '-debug'
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+tasks.register('syncWebAssets', Copy) {
+    from(rootProject.projectDir.parentFile) {
+        include 'index.html'
+        include '*.css'
+        include '*.js'
+        include 'assets/**'
+        include 'audio-options/**'
+    }
+    into layout.projectDirectory.dir('src/main/assets/www')
+}
+
+tasks.named('preBuild').configure {
+    dependsOn tasks.named('syncWebAssets')
+}

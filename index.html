@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="motion-effects.css?v=2">
   <link rel="stylesheet" href="imperial-theme.css?v=2">
   <link rel="stylesheet" href="skill-effects.css?v=1">
-  <link rel="stylesheet" href="skill-card-effects.css?v=1">
+  <link rel="stylesheet" href="premium-ui.css?v=1">
 </head>
 <body>
   <canvas id="sky" aria-hidden="true"></canvas>
@@ -38,8 +38,11 @@
     </section>
 
     <section class="screen" id="home-screen">
-      <header class="topbar">
-        <button class="profile-button" id="profile-open"><span class="avatar-mini">月</span><span id="home-name">月下客</span></button>
+      <header class="topbar home-topbar">
+        <button class="profile-button" id="profile-open" aria-label="打开个人主页与收藏">
+          <span class="avatar-mini">月</span>
+          <span class="profile-copy"><strong id="home-name">月下客</strong><small>月庭游历者</small></span>
+        </button>
         <div class="brand-small">朔望月</div>
         <button class="icon-button" id="sound-toggle" title="切换声音" aria-label="切换声音">♪</button>
       </header>
@@ -48,18 +51,54 @@
         <div class="mountains"></div>
         <div class="lake"></div>
         <div class="table-silhouette"><i></i><i></i><i></i><i></i></div>
-        <div class="home-copy">
-          <p>银汉无声 · 月庭候局</p>
-          <h2>今夜，月律将改变强弱</h2>
+        <div class="home-character-stage" id="home-character-stage">
+          <div class="home-character-aura" aria-hidden="true"></div>
+          <div class="home-seat-scene" aria-label="霜弦的候席之椅">
+            <div class="home-seat-turner">
+              <div class="home-seat-face home-seat-rear" aria-hidden="true">
+                <div class="home-hood-back"></div>
+                <div class="home-chair-rear"><i></i><i></i></div>
+              </div>
+              <div class="home-seat-face home-seat-front">
+                <div class="home-chair-front"><i></i><i></i></div>
+                <div class="home-guest-robe"><i></i><i></i></div>
+                <div class="home-mask-frame">
+                  <img id="home-character-portrait" src="assets/fox.svg" alt="白狐 · 霜弦的角色面具">
+                  <i class="home-mask-glint" aria-hidden="true"></i>
+                  <span class="home-mask-horror" aria-hidden="true"><i></i><i></i><b></b><em></em></span>
+                </div>
+                <span id="home-seat-sigil">狐</span>
+              </div>
+            </div>
+            <div class="home-seat-shadow" aria-hidden="true"></div>
+          </div>
+          <div class="home-character-caption">
+            <span id="home-character-title">白狐 · 霜弦</span>
+            <strong id="home-character-name">霜弦</strong>
+            <small id="home-character-trait">冷静 · 优雅</small>
+          </div>
         </div>
-        <button class="start-orbit" id="start-game"><span>开始游戏</span></button>
+        <div class="home-command">
+          <h2>今夜，月律将改变强弱</h2>
+          <p>二十四节气与十二传统节日已归入牌库。选定席位，在八轮朔望之间执掌胜负。</p>
+          <div class="home-session"><span>单机牌局</span><span>2-6 席</span><span>本地存档</span></div>
+          <button class="start-orbit" id="start-game">
+            <span>开始游戏</span>
+            <small>进入月庭，选择你的角色</small>
+            <b aria-hidden="true">→</b>
+          </button>
+        </div>
+        <p class="home-court-status">银汉无声，月庭候局</p>
       </div>
-      <nav class="home-nav">
-        <button data-panel="records">战绩</button>
-        <button data-panel="atlas">图鉴</button>
-        <button data-panel="notes">观月札记</button>
-      </nav>
     </section>
+
+    <div class="home-mask-transition" id="home-mask-transition" aria-hidden="true">
+      <div class="home-transition-figure" id="home-transition-figure">
+        <img id="home-transition-mask" src="assets/fox.svg" alt="">
+        <span class="home-mask-horror" aria-hidden="true"><i></i><i></i><b></b><em></em></span>
+      </div>
+      <i></i>
+    </div>
 
     <section class="screen" id="select-screen">
       <header class="topbar">
@@ -120,10 +159,6 @@
         <div class="skill-cinema-art"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         <div class="skill-cinema-copy"><span id="skill-cinema-owner"></span><strong id="skill-cinema-name"></strong><small id="skill-cinema-line"></small></div>
       </div>
-      <div class="card-skill-cinema" id="card-skill-cinema" aria-live="assertive" aria-hidden="true">
-        <div class="card-skill-heading"><span>满月术式</span><strong id="card-skill-name"></strong><small id="card-skill-line"></small></div>
-        <div class="card-skill-stage" id="card-skill-stage"></div>
-      </div>
       <div class="game-board" id="game-board">
         <div class="full-moon-cinema" id="full-moon-cinema" aria-hidden="true"><div class="cinema-moon"><i></i></div><p>满月升起</p><small>月律改变 · 月限已启</small></div>
         <div class="court-decor" aria-hidden="true"><i class="lantern left"></i><i class="lantern right"></i><span class="moon-gate"></span><span class="cloud-band"></span><span class="balustrade"></span></div>
@@ -145,15 +180,10 @@
       </div>
       <div class="action-log" id="action-log"></div>
       <div class="action-bar" id="action-bar">
-        <button data-action="fold">认输</button>
-        <button data-action="check" id="check-action">观望</button>
-        <button data-action="call">跟注</button>
-        <button class="swap-action" data-action="swap" id="swap-action">易牌 <span id="swap-left">2</span></button>
-        <button class="character-skill-action" data-action="character-skill" id="character-skill-action">角色技</button>
-        <button class="skill-action" data-action="skill" id="skill-action">抽技能</button>
-        <button class="risk-action" data-action="risk" id="risk-action">赌命</button>
-        <div class="raise-control"><button data-action="raise">加注</button><input id="raise-amount" type="range" min="1" max="3" value="1"><b id="raise-label">+1</b></div>
-        <button class="all-in" data-action="allin" title="道尽后参与本回合拼点，未获胜则回合结束时淘汰">尽数投入 · 待判</button>
+        <div class="action-cluster action-decisions"><button data-action="fold">弃权</button><button data-action="check" id="check-action">观望</button><button data-action="call">跟注</button></div>
+        <div class="action-cluster action-tactics"><button class="swap-action" data-action="swap" id="swap-action">易牌 <span id="swap-left">2</span></button><button class="character-skill-action" data-action="character-skill" id="character-skill-action">本领</button><button class="risk-action" data-action="risk" id="risk-action">赌命</button></div>
+        <div class="raise-control"><button data-action="raise">加注</button><label class="raise-slider" for="raise-amount"><input id="raise-amount" type="range" min="1" max="3" step="1" value="1"><b id="raise-label">+1</b></label></div>
+        <button class="all-in" data-action="allin" title="道尽后参与本回合拼点，未获胜则回合结束时淘汰">尽数投入</button>
       </div>
     </section>
 
@@ -175,9 +205,8 @@
     <h2 id="tutorial-title"></h2>
     <p id="tutorial-body"></p>
     <div class="tutorial-demo" id="tutorial-demo"></div>
-    <div class="tutorial-actions"><button class="secondary" id="tutorial-skip">暂时跳过</button><button class="primary" id="tutorial-next">下一步</button></div>
+    <div class="tutorial-actions"><button class="secondary" id="tutorial-skip">暂时跳过</button><div><button class="secondary" id="tutorial-prev">上一步</button><button class="primary" id="tutorial-next">下一步</button></div></div>
   </dialog>
-  <dialog id="skill-dialog" class="skill-dialog"><p class="eyebrow">满月技能</p><h2 id="skill-title"></h2><div id="skill-art"></div><p id="skill-description"></p><div id="skill-targets"></div><div class="skill-actions"><button class="secondary" id="skill-discard">放弃此牌</button><button class="primary" id="skill-confirm">确认</button></div></dialog>
   <dialog id="covenant-dialog" class="skill-dialog covenant-dialog"><p class="eyebrow">月下对决</p><h2 id="covenant-title"></h2><p id="covenant-copy"></p><div id="covenant-choices" class="covenant-choices"><button type="button" onclick="chooseCovenant('同月')">同月<small>心念映照同一轮月</small></button><button type="button" onclick="chooseCovenant('背月')">背月<small>各向月影的两端</small></button></div><div id="covenant-result" hidden></div></dialog>
   <dialog id="character-skill-dialog" class="skill-dialog character-skill-dialog"><p class="eyebrow">角色本领</p><h2 id="character-skill-title"></h2><div id="character-skill-art"></div><p id="character-skill-description"></p><p class="character-skill-state" id="character-skill-state"></p><div id="character-skill-options"></div><div class="skill-actions"><button class="secondary" id="character-skill-close">关闭</button><button class="primary" id="character-skill-confirm">发动</button></div></dialog>
   <dialog id="risk-dialog" class="skill-dialog"><p class="eyebrow">满月赌命</p><h2>选择赌命方向</h2><p>方向只对你可见。当前回合结算时总点数会加 10 或减 10；之后每回合都必须获胜，否则直接淘汰并均分剩余道。</p><div class="skill-actions"><button class="secondary" data-risk="-10">赌命 · -10</button><button class="primary" data-risk="10">赌命 · +10</button></div></dialog>

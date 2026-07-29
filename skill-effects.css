@@ -64,6 +64,22 @@
 @keyframes mountainDrop{0%{translate:-50% -220px;scale:.65;opacity:0}28%,76%{translate:-50% 0;scale:1;opacity:1}100%{translate:-50% 12px;opacity:0}}
 @keyframes mountainWave{0%,28%{scale:.2;opacity:0}38%{opacity:1}80%,100%{scale:1.9;opacity:0}}
 
+/* 撼岳: two mountain gates collide around a molten fault. */
+.skill-撼岳:before{background:radial-gradient(ellipse at 50% 64%,rgba(230,164,62,.42),rgba(45,24,9,.93) 36%,#030302 76%)}
+.skill-撼岳 .skill-cinema-art{animation:mountainClashShake var(--skill-duration) linear both}
+.skill-撼岳 .skill-cinema-art:before,.skill-撼岳 .skill-cinema-art:after{content:"";position:absolute;top:32px;width:205px;height:254px;background:linear-gradient(142deg,#5b4a30 0 18%,#1d241c 19% 54%,#090d0b 55%);filter:drop-shadow(0 28px 28px #000);animation:mountainGateClash var(--skill-duration) cubic-bezier(.16,1,.3,1) both}
+.skill-撼岳 .skill-cinema-art:before{right:49%;clip-path:polygon(0 100%,0 56%,22% 63%,48% 18%,65% 43%,82% 0,100% 100%);--mountain-start:-210px;--mountain-end:-24px}
+.skill-撼岳 .skill-cinema-art:after{left:49%;clip-path:polygon(0 100%,18% 0,35% 43%,52% 18%,78% 63%,100% 56%,100% 100%);--mountain-start:210px;--mountain-end:24px}
+.skill-撼岳 .skill-cinema-art i:nth-child(1){z-index:2;width:15px;height:252px;background:linear-gradient(transparent,#fff1ad 20%,#df8e26 58%,transparent);filter:drop-shadow(0 0 18px #f0a62e);clip-path:polygon(35% 0,100% 16%,45% 33%,82% 51%,22% 72%,64% 100%,0 78%,38% 55%,8% 34%);animation:mountainFault var(--skill-duration) ease-out both}
+.skill-撼岳 .skill-cinema-art i:nth-child(2){top:245px;width:280px;height:78px;border:2px solid #e7b953;border-radius:50%;box-shadow:0 0 34px rgba(236,169,56,.32);animation:mountainChallengeWave var(--skill-duration) ease-out both}
+.skill-撼岳 .skill-cinema-art i:nth-child(n+3){z-index:3;width:24px;height:30px;background:#c18b3b;clip-path:polygon(50% 0,100% 76%,62% 100%,0 68%);filter:drop-shadow(0 8px 8px #000);animation:mountainDebris var(--skill-duration) cubic-bezier(.16,1,.3,1) both}
+.skill-撼岳 .skill-cinema-art i:nth-child(3){--debris-x:-155px;--debris-y:-82px;animation-delay:.08s}.skill-撼岳 .skill-cinema-art i:nth-child(4){--debris-x:142px;--debris-y:-105px;animation-delay:.13s}.skill-撼岳 .skill-cinema-art i:nth-child(5){--debris-x:-108px;--debris-y:72px;animation-delay:.18s}.skill-撼岳 .skill-cinema-art i:nth-child(6){--debris-x:126px;--debris-y:58px;animation-delay:.2s}
+@keyframes mountainGateClash{0%,12%{translate:var(--mountain-start) 24px;opacity:0}38%,76%{translate:0 0;opacity:1}100%{translate:var(--mountain-end) 18px;opacity:0}}
+@keyframes mountainFault{0%,30%{scale:1 0;opacity:0}43%,76%{scale:1 1;opacity:1}100%{scale:2 1.18;opacity:0}}
+@keyframes mountainChallengeWave{0%,34%{scale:.18;opacity:0}46%{opacity:1}100%{scale:2.15;opacity:0}}
+@keyframes mountainDebris{0%,35%{translate:0 0;rotate:0;opacity:0}48%{opacity:1}82%{translate:var(--debris-x) var(--debris-y);rotate:140deg;opacity:1}100%{translate:var(--debris-x) var(--debris-y);rotate:210deg;opacity:0}}
+@keyframes mountainClashShake{0%,36%,46%,100%{translate:0 0}38%{translate:-6px 2px}40%{translate:5px -2px}42%{translate:-3px 1px}44%{translate:2px 0}}
+
 /* 回枝: six cinnabar branches regrow around a silver moon seed. */
 .skill-回枝:before{background:radial-gradient(circle at center,rgba(191,75,55,.34),rgba(7,20,14,.94) 55%,#020503)}
 .skill-回枝 .skill-cinema-art:before{content:"";width:82px;height:82px;border-radius:50%;background:#e9e8d2;box-shadow:0 0 60px rgba(222,238,214,.5);animation:branchSeed var(--skill-duration) ease-in-out both}

@@ -23,9 +23,25 @@ function startAmbient(){if(audioOn)switchMusic('home');}
 function stopAmbient(){if(!musicState.audio)return;musicState.audio.pause();musicState.audio.currentTime=0;musicState={name:null,audio:null};}
 function tone(freq,duration=.12,volume=.15,type='sine',delay=0){if(!audioOn)return;const ctx=ensureAudio();if(!ctx)return;const osc=ctx.createOscillator(),gain=ctx.createGain(),now=ctx.currentTime+delay;osc.type=type;osc.frequency.setValueAtTime(freq,now);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(volume,now+.015);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);osc.connect(gain);gain.connect(audioState.master);osc.start(now);osc.stop(now+duration+.03);}
 function sfx(name){if(!audioOn)return;const patterns={turn:[[392,.08,.1]],deal:[[520,.08,.16],[360,.13,.12,.07]],dao:[[250,.09,.16,'triangle'],[340,.12,.13,'triangle',.08]],chip:[[290,.07,.14],[430,.1,.12,.08]],fold:[[190,.18,.12]],out:[[120,.28,.16,'sawtooth'],[90,.36,.12,'sine',.12]],raise:[[430,.08,.13],[610,.14,.15,.07]],showdown:[[310,.12,.12],[466,.16,.13,.1]],win:[[392,.12,.16],[523,.16,.17,.11],[659,.25,.18,.23]]};const intensity=game&&game.round>=5?1.18:1;(patterns[name]||patterns.chip).forEach(x=>tone(x[0]*intensity,x[1],Math.min(.24,x[2]*(game&&game.round>=5?1.3:1)),x[3]||'sine',x[4]||0));}
+function playMaskCreakSfx(){
+  if(!audioOn)return;
+  const ctx=ensureAudio();if(!ctx)return;
+  const now=ctx.currentTime,master=audioState.master;
+  const sweep=(start,end,duration,volume,type='sine',delay=0)=>{const osc=ctx.createOscillator(),gain=ctx.createGain(),at=now+delay;osc.type=type;osc.frequency.setValueAtTime(start,at);osc.frequency.exponentialRampToValueAtTime(Math.max(1,end),at+duration);gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(volume,at+.018);gain.gain.exponentialRampToValueAtTime(.0001,at+duration);osc.connect(gain);gain.connect(master);osc.start(at);osc.stop(at+duration+.04);};
+  const buffer=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.36),ctx.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(1-i/data.length);
+  const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),noiseGain=ctx.createGain();noise.buffer=buffer;filter.type='bandpass';filter.frequency.setValueAtTime(760,now);filter.frequency.exponentialRampToValueAtTime(120,now+.3);noiseGain.gain.setValueAtTime(.0001,now);noiseGain.gain.exponentialRampToValueAtTime(.16,now+.055);noiseGain.gain.exponentialRampToValueAtTime(.0001,now+.34);noise.connect(filter);filter.connect(noiseGain);noiseGain.connect(master);noise.start(now);noise.stop(now+.36);
+  sweep(238,82,.18,.09,'sawtooth',0);sweep(174,61,.24,.13,'triangle',.09);sweep(112,38,.36,.2,'sawtooth',.2);sweep(58,31,.5,.2,'sine',.08);sweep(690,96,.08,.075,'square',.29);
+}
+function playMaskZoomSfx(){
+  if(!audioOn)return;
+  const ctx=ensureAudio();if(!ctx)return;const now=ctx.currentTime,master=audioState.master;
+  const drone=ctx.createOscillator(),droneGain=ctx.createGain();drone.type='sawtooth';drone.frequency.setValueAtTime(168,now);drone.frequency.exponentialRampToValueAtTime(36,now+.64);droneGain.gain.setValueAtTime(.0001,now);droneGain.gain.exponentialRampToValueAtTime(.055,now+.13);droneGain.gain.exponentialRampToValueAtTime(.2,now+.52);droneGain.gain.exponentialRampToValueAtTime(.0001,now+.67);drone.connect(droneGain);droneGain.connect(master);drone.start(now);drone.stop(now+.7);
+  const buffer=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.68),ctx.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(.35+.65*i/data.length);const breath=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();breath.buffer=buffer;filter.type='bandpass';filter.frequency.setValueAtTime(1100,now);filter.frequency.exponentialRampToValueAtTime(140,now+.64);filter.Q.value=2.8;gain.gain.setValueAtTime(.0001,now);gain.gain.linearRampToValueAtTime(.12,now+.48);gain.gain.exponentialRampToValueAtTime(.0001,now+.68);breath.connect(filter);filter.connect(gain);gain.connect(master);breath.start(now);breath.stop(now+.7);
+  tone(880,.08,.08,'square',.48);tone(72,.22,.16,'sine',.5);
+}
 function unlockAudio(){const ctx=ensureAudio();if(!ctx){console.warn('No Web Audio output available');return false;}ctx.resume();startAmbient();tone(660,.08,.12);return true;}
 
-function showScreen(id){ $$('.screen').forEach(s=>s.classList.remove('active')); $(`#${id}`).classList.add('active'); }
+function showScreen(id){if(id==='home-screen')resetHomeEntrance();$$('.screen').forEach(s=>s.classList.remove('active'));$(`#${id}`).classList.add('active');}
 function shuffle(a){ const x=[...a]; for(let i=x.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];} return x; }
 function cardHTML(c, hidden=false){ if(hidden) return ''; const season=['spring','spring','spring','summer','summer','summer','autumn','autumn','autumn','winter','winter','winter'][c.month-1]; return `<span class="cat">${c.category}</span><b class="power-corner">${c.value}</b><span class="ink-art ${season}"></span><strong class="card-name">${c.name}</strong><span class="date">${cnMonth[c.month]}${cnDay(c.day)}</span>`; }
 function setCard(el,c,hidden=false){ el.className=`card${hidden?' back':''}`; el.innerHTML=cardHTML(c,hidden); }
@@ -42,7 +58,62 @@ function initSky(){
   addEventListener('resize',resize);resize();draw();
 }
 
-function renderCharacter(){ const c=characters[charIndex]; $('#character-glyph').innerHTML=`<img src="${c.portrait}" alt="${c.title}">`; $('#character-glyph').style.background=c.color; $('#character-title').textContent=c.title; $('#character-name').textContent=c.name; $('#character-trait').textContent=c.trait; $('#character-skill-name').textContent=c.skill.name; $('#character-skill-summary').textContent=c.skill.description.replace('每回合一次。',''); }
+function renderCharacter(){
+  const c=characters[charIndex];
+  $('#character-glyph').innerHTML=`<img src="${c.portrait}" alt="${c.title}">`;
+  $('#character-glyph').style.background=c.color;
+  $('#character-title').textContent=c.title;
+  $('#character-name').textContent=c.name;
+  $('#character-trait').textContent=c.trait;
+  $('#character-skill-name').textContent=c.skill.name;
+  $('#character-skill-summary').textContent=c.skill.description.replace('每回合一次。','');
+  const homePortrait=$('#home-character-portrait');
+  if(homePortrait){
+    homePortrait.src=c.portrait;
+    homePortrait.alt=`${c.title}的角色面具`;
+    $('#home-character-title').textContent=c.title;
+    $('#home-character-name').textContent=c.name;
+    $('#home-character-trait').textContent=c.trait;
+    $('#home-seat-sigil').textContent=c.glyph;
+    $('.home-seat-scene').setAttribute('aria-label',`${c.name}的候席之椅`);
+    $('#home-transition-mask').src=c.portrait;
+  }
+}
+
+let homeEntranceBusy=false;
+let homeEntranceTimers=[];
+let homeMaskAnimation=null;
+function homeEntranceLater(callback,delay){const id=setTimeout(callback,delay);homeEntranceTimers.push(id);return id;}
+function clearHomeEntranceTimers(){homeEntranceTimers.forEach(clearTimeout);homeEntranceTimers=[];}
+function resetHomeEntrance(){
+  clearHomeEntranceTimers();homeMaskAnimation?.cancel();homeMaskAnimation=null;homeEntranceBusy=false;
+  const home=$('#home-screen'),portal=$('#home-mask-transition'),select=$('#select-screen'),start=$('#start-game');
+  home?.classList.remove('home-entering','seat-revealed','mask-horrified','mask-zooming','reduced-entry');
+  home?.removeAttribute('aria-busy');portal?.classList.remove('active','is-crossing','horror');select?.classList.remove('mask-arrival');
+  const portalFigure=$('#home-transition-figure');if(portalFigure)portalFigure.removeAttribute('style');if(start)start.disabled=false;
+  const track=musicTracks[musicState.name];if(musicState.audio&&track)musicState.audio.volume=track.volume;
+}
+function finishHomeEntrance(reduced=false){
+  const home=$('#home-screen'),portal=$('#home-mask-transition'),select=$('#select-screen');
+  showScreen('select-screen');switchMusic('battle');select.classList.add('mask-arrival');portal.classList.toggle('is-crossing',!reduced);
+  homeEntranceLater(()=>{portal.classList.remove('active','is-crossing','horror');$('#home-transition-figure').removeAttribute('style');home.classList.remove('home-entering','seat-revealed','mask-horrified','mask-zooming','reduced-entry');home.removeAttribute('aria-busy');select.classList.remove('mask-arrival');$('#start-game').disabled=false;homeEntranceBusy=false;homeMaskAnimation=null;},reduced?240:160);
+}
+function zoomIntoHomeMask(){
+  const source=$('.home-mask-frame'),portal=$('#home-mask-transition'),mask=$('#home-transition-figure');if(!source||!portal||!mask){finishHomeEntrance();return;}
+  const rect=source.getBoundingClientRect(),scale=Math.max(innerWidth/rect.width,innerHeight/rect.height)*1.45,dx=innerWidth/2-(rect.left+rect.width/2),dy=innerHeight/2-(rect.top+rect.height/2);
+  mask.style.left=`${rect.left}px`;mask.style.top=`${rect.top}px`;mask.style.width=`${rect.width}px`;mask.style.height=`${rect.height}px`;portal.classList.add('active','horror');$('#home-screen').classList.add('mask-zooming');playMaskZoomSfx();
+  homeMaskAnimation=mask.animate([{transform:'translate3d(0,0,0) scale(1)',filter:'brightness(1.1) contrast(1.08)'},{offset:.32,transform:`translate3d(${dx*.35}px,${dy*.35}px,0) scale(${1+(scale-1)*.22})`,filter:'brightness(1.7) contrast(1.25)'},{transform:`translate3d(${dx}px,${dy}px,0) scale(${scale})`,filter:'brightness(.28) contrast(1.45) blur(1px)'}],{duration:620,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'});
+  homeEntranceLater(()=>portal.classList.add('is-crossing'),500);homeEntranceLater(()=>finishHomeEntrance(false),610);
+}
+function beginHomeEntrance(){
+  if(homeEntranceBusy)return;homeEntranceBusy=true;clearHomeEntranceTimers();
+  const home=$('#home-screen'),start=$('#start-game'),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;home.setAttribute('aria-busy','true');start.disabled=true;home.classList.add('home-entering');
+  if(musicState.audio)musicState.audio.volume=Math.min(musicState.audio.volume,.16);
+  if(reduced){home.classList.add('seat-revealed','mask-horrified','reduced-entry');playMaskCreakSfx();homeEntranceLater(()=>finishHomeEntrance(true),360);return;}
+  homeEntranceLater(()=>{home.classList.add('seat-revealed');playMaskCreakSfx();},90);
+  homeEntranceLater(()=>{home.classList.add('mask-horrified');tone(54,.34,.2,'sawtooth');tone(720,.08,.11,'square',.04);},390);
+  homeEntranceLater(zoomIntoHomeMask,840);
+}
 function applyTheme(theme){const selected=theme==='imperial'?'imperial':'moon-court';document.body.dataset.theme=selected;localStorage.setItem('shuoWangTheme',selected);$$('[data-theme-choice]').forEach(button=>button.classList.toggle('selected',button.dataset.themeChoice===selected));const quick=$('#theme-quick-toggle');if(quick){quick.textContent=selected==='imperial'?'庭':'漆';quick.title=selected==='imperial'?'切换为原有月庭':'切换为宫灯漆金';}}
 const speedLabels={immersive:'沉浸',standard:'标准',fast:'快速'};
 function applySpeed(speed){gameSpeed=GameRuntime.SPEEDS[speed]?speed:'standard';document.body.dataset.speed=gameSpeed;localStorage.setItem('shuoWangSpeed',gameSpeed);$$('[data-speed]').forEach(button=>button.classList.toggle('selected',button.dataset.speed===gameSpeed));const quick=$('#speed-quick-toggle');if(quick){quick.textContent={immersive:'沉',standard:'标',fast:'快'}[gameSpeed];quick.title=`当前${speedLabels[gameSpeed]}节奏，点击切换`;}}
@@ -50,21 +121,6 @@ function clearCharacterSkillEffect(){const cinema=$('#skill-cinema');if(!cinema)
 function playCharacterSkillEffect(name,player,onComplete){const cinema=$('#skill-cinema');if(!cinema){onComplete?.();return;}const lines={封月:'月门合璧 · 此牌点数沉寂',镇岳:'山势镇盘 · 跟注减免一道',回枝:'枯木逢月 · 三道归身',鹰瞰:'雪羽开瞳 · 暗牌入眼',断势:'朱痕断路 · 只许跟弃',借月:'双月错位 · 盈亏藏锋',撼岳:'山门对峙 · 应战或退让',同契:'双签映月 · 同行或相背',逐寂:'孤影收势 · 道归夜岚'};clearCharacterSkillEffect();const factor=GameRuntime.SPEEDS[gameSpeed]||1,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;cinema.style.setProperty('--skill-duration',reduced?'1s':`${2.1*factor}s`);cinema.classList.add('active',`skill-${name}`);cinema.setAttribute('aria-hidden','false');$('#skill-cinema-owner').textContent=player?.name||'';$('#skill-cinema-name').textContent=name;$('#skill-cinema-line').textContent=lines[name]||'月律响应';sfx(name==='断势'?'raise':name==='回枝'?'win':'showdown');schedule(()=>{clearCharacterSkillEffect();onComplete?.();},reduced?1000/factor:2100);}
 function setOperationBusy(busy){operationBusy=busy;document.body.classList.toggle('operation-busy',busy);if(game)renderActions();}
 function runEffectSequence(steps,onComplete){const queue=[...steps];const next=()=>{const step=queue.shift();if(!step){onComplete?.();return;}step(next);};next();}
-function clearCardSkillEffect(){const cinema=$('#card-skill-cinema');if(!cinema)return;cinema.className='card-skill-cinema';cinema.setAttribute('aria-hidden','true');$('#game-screen').classList.remove('card-skill-playing');}
-function effectCard(card,back=false,label=''){return `<div class="effect-card${back?' back':''}">${label?`<small>${label}</small>`:''}${back?'<b>月</b>':`<b>${card?.name||'新牌'}</b><span>${card?.value??'?'}</span>`}</div>`;}
-function playCardSkillEffect(name,payload,onMidpoint,onComplete){
-  const cinema=$('#card-skill-cinema');if(!cinema){onMidpoint();onComplete?.();return;}
-  const copy={易牌:'旧序退场 · 新牌落位',换牌:'双牌易位 · 月轨交错',透视:'月镜巡照 · 暗纹显形',加牌:'月库启封 · 暗牌入列',送牌:'一牌渡席 · 明牌相赠'}[name];
-  const old=payload.oldCard,target=payload.target,newCard=payload.newCard,zone=payload.zone;
-  let art='';
-  if(name==='易牌')art=`${effectCard(old,false,'原明牌')}${effectCard(newCard,false,'新明牌')}`;
-  if(name==='换牌')art=`${effectCard(old,false,`你的${zone==='hidden'?'暗牌':'明牌'}`)}<i class="exchange-mark">换</i>${effectCard(payload.targetCard,zone==='hidden',`${target.name} · ${zone==='hidden'?'暗牌':'明牌'}`)}`;
-  if(name==='透视')art=`${effectCard(payload.targetCard,true,`${target.name} · 暗牌`)}<i class="scan-line"></i>`;
-  if(name==='加牌')art=`<div class="effect-deck">月库</div>${effectCard(newCard,true,'新增暗牌')}<div class="effect-stack">暗牌区</div>`;
-  if(name==='送牌')art=`${effectCard(old,false,'送出的明牌')}<i class="send-path"></i><div class="effect-target">${target.name}</div>${effectCard(newCard,false,'补抽明牌')}`;
-  clearCardSkillEffect();$('#card-skill-name').textContent=name;$('#card-skill-line').textContent=copy;$('#card-skill-stage').innerHTML=art;cinema.classList.add('active',`effect-${name}`);cinema.setAttribute('aria-hidden','false');$('#game-screen').classList.add('card-skill-playing');
-  const factor=GameRuntime.SPEEDS[gameSpeed]||1,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,duration=reduced?420:Math.round(1500*factor);cinema.style.setProperty('--card-skill-duration',`${duration}ms`);sfx(name==='透视'?'showdown':'deal');schedule(onMidpoint,duration*.48);schedule(()=>{clearCardSkillEffect();onComplete?.();},duration);
-}
 function skillUnavailableReason(player){if(!game||!player)return '尚未入局';if(player.charSkillUsed)return '本回合已使用';if(player.char.skill.name==='同契'&&player.covenantUsed)return '同契本局已经使用';if(game.pendingDuel)return '道尽对决期间禁用';if(game.currentTurnId!==player.id)return '等待你的行动回合';if(player.pendingOut)return '道尽后不可发动';return '可以发动 · 无负面效果';}
 function renderRoundGuide(){if(!game)return;const human=game.players[0],owed=Math.max(0,game.highBet-human.bet),score=scoredPower(human);$('#guide-power').textContent=score;$('#guide-rule').textContent=game.round<=4?'朔月：总点数越大越强':score>game.moonLimit?`已超过月限 ${game.moonLimit}，当前会蚀月`:`满月：距离月限 ${game.moonLimit} 还差 ${game.moonLimit-score} 点`;$('#guide-call').textContent=owed?`跟注需要 ${owed} 道${human.callDiscountArmed?`，镇岳可减免 ${human.callDiscountValue} 道`:''}`:'当前无需补道，可以观望';const privateDelta=human.charScoreRound===game.round?` · 本回合 ${human.charScoreDelta>0?'+':''}${human.charScoreDelta} 点`:'';$('#guide-skill').textContent=`${human.char.skill.name}：${skillUnavailableReason(human)}${privateDelta}`;}
 function updateMoonIcon(){if(!game)return;const fill=Math.min(100,game.round<=5?game.round*20:100);$('#phase-moon').style.background=`linear-gradient(90deg,#e4eadc 0 ${fill}%,#0b1817 ${fill}% 100%)`;$('#phase-moon').classList.toggle('is-full',fill===100);}
@@ -88,10 +144,9 @@ function showFullMoonSequence(){
 function startRound(){
   scheduler.cancelAll();
   clearCharacterSkillEffect();
-  clearCardSkillEffect();
   const living=game.players.filter(p=>!p.out);if(living.length<=1||game.round>=8){finishGame();return;}
   game.round++;game.resolving=false;game.earlyWinner=null;$('#game-board').classList.remove('overhead'); const cards=shuffle(deck), phase=game.round<=4?'朔月':'满月'; game.drawPile=cards.slice(game.players.length*2+1);
-  game.public=cards[game.players.length*2];game.visionTargets=[];game.visionTarget=null;game.pot=game.potCarry;game.highBet=1;game.actionCount=0;game.skillUsed=false;game.currentTurnId=null;game.pendingDuel=false;game.moonLimit=game.round>4?[44,48,52,56][game.round-5]:null;
+  game.public=cards[game.players.length*2];game.visionTargets=[];game.visionTarget=null;game.pot=game.potCarry;game.highBet=1;game.actionCount=0;game.currentTurnId=null;game.pendingDuel=false;game.moonLimit=game.round>4?[44,48,52,56][game.round-5]:null;
   game.players.forEach((p,i)=>{p.visible=cards[i*2];p.hidden=cards[i*2+1];p.hiddenExtras=[];p.visibleExtras=[];p.roundEliminated=false;p.charSkillUsed=false;p.lockedZone=null;p.charScoreDelta=0;p.charScoreRound=null;p.breakTargetIds=[];p.raiseBlockedActions=0;p.skillIntelTargetIds=[];p.moonSwapAwards=0;p.moonSwaps=0;p.bet=0;if(p.out){p.folded=true;p.status='已出局';return;}p.folded=false;if(p.dao<=0){p.pendingOut=true;p.status='道尽·待判';return;}p.pendingOut=false;p.status='候场';p.dao--;p.bet=1;game.pot++;if(p.dao===0){p.pendingOut=true;p.status='道尽·待判';}if(p.char.skill.passiveName==='逐月'&&GameRules.moonAligned(p,game.public)){p.moonSwapAwards=1;p.moonSwaps=1;}});
   $('#round-number').textContent=game.round;$('#phase-name').textContent=phase;$('#moon-limit').textContent=game.moonLimit?`月限 ${game.moonLimit}`:'';$('#risk-status').textContent=game.riskActive?'赌命中':'';if(game.players[0].moonSwaps)game.players[0].status='逐月共鸣 · 获得额外易牌 1/2';updateMoonIcon();
   $('#game-screen').classList.toggle('full-phase',game.round>4);if(game.round<5)$('#full-moon-cinema').classList.remove('active');setCard($('#public-card'),game.public);setCard($('#visible-card'),game.players[0].visible);setCard($('#hidden-card'),game.players[0].hidden);
@@ -102,7 +157,7 @@ function startRound(){
 }
 
 function renderBoard(animateDao=false){
-  const seats=$('#seats'); seats.innerHTML='';const rivals=game.players.filter(p=>!p.human),layouts={2:[[25,25],[75,25]],3:[[18,38],[50,17],[82,38]],4:[[12,45],[36,18],[64,18],[88,45]],5:[[10,47],[28,24],[50,15],[72,24],[90,47]]};
+  const seats=$('#seats'); seats.innerHTML='';const rivals=game.players.filter(p=>!p.human),layouts={2:[[25,27],[75,27]],3:[[18,40],[50,22],[82,40]],4:[[12,45],[36,23],[64,23],[88,45]],5:[[10,47],[28,27],[50,21],[72,27],[90,47]]};
   game.players.forEach(p=>{let x,y;if(p.human){x=9;y=76}else{const pos=(layouts[rivals.length]||layouts[5])[rivals.indexOf(p)];[x,y]=pos;}const el=document.createElement('div');el.dataset.playerId=p.id;el.className=`seat${p.human?' human-seat':''}${p.folded?' folded':''}${p.out?' out':''}${p.pendingOut?' pending-out':''}${game.currentTurnId===p.id?' current-turn':''}`;el.style.left=`${x}%`;el.style.top=`${y}%`;const effect=p.lockedZone?`封月·${p.lockedZone==='visible'?'明牌归零':'暗牌归零'}`:p.raiseBlockedActions>0?`断势中 · ${p.breakSourceName||'夜岚'}施加`:p.breakTargetIds?.length?'断势待发':'';const skillState=characterSkillStatus(p);el.innerHTML=`<div class="seat-avatar"><img src="${p.char.portrait}" alt="${p.char.title}"></div><button type="button" class="character-skill-badge${p.charSkillUsed?' used':''}${effect?' active':''}" data-skill-player="${p.id}" title="${p.char.skill.name} · ${skillState}" aria-label="查看 ${p.name} 的技能 ${p.char.skill.name}，${skillState}">${p.char.skill.symbol}</button><div class="seat-name">${p.name}${p.human?' · 你':''}</div><div class="seat-stats">${p.dao} 道 · 已注 ${p.bet}</div><span class="seat-status">${effect||p.status}</span>${p.human&&game.riskActive?'<span class="risk-call">我要赌命</span>':''}${!p.human&&p.visible?`<div class="seat-visible${p.lockedZone==='visible'?' sealed-card':''}"><small>明牌</small><b>${p.visible.name}</b><span>${p.lockedZone==='visible'?0:p.visible.value}</span>${p.lockedZone==='visible'?sealOverlayHTML():''}</div>${(p.visibleExtras||[]).map(c=>`<div class="seat-extra-visible"><b>${c.name}</b> · ${c.value}</div>`).join('')}`:''}${game.currentTurnId===p.id&&!p.human?'<i class="thinking-bar"></i>':''}`;seats.appendChild(el); });
   $('#pot-value').textContent=game.pot;$('#current-bet').textContent=game.players[0].bet;$('#dao-left').textContent=game.players[0].dao;
   $('#visible-card').classList.toggle('sealed-card',game.players[0].lockedZone==='visible');$('#hidden-card').classList.toggle('sealed-card',game.players[0].lockedZone==='hidden');renderSealOverlay($('#visible-card'),game.players[0].lockedZone==='visible');renderSealOverlay($('#hidden-card'),game.players[0].lockedZone==='hidden');
@@ -113,10 +168,10 @@ function renderActions(){
   const h=game.players[0], owed=Math.max(0,game.highBet-h.bet),myTurn=game.currentTurnId===h.id&&!h.out&&!h.folded&&!h.pendingOut;
   const legal=new Set(GameRules.legalActions(h,{currentTurnId:game.currentTurnId,highBet:game.highBet,pendingDuel:game.pendingDuel}));
   $('[data-action="fold"]').disabled=!legal.has('fold');$('#check-action').disabled=!legal.has('check');$('[data-action="call"]').disabled=!legal.has('call');$('[data-action="raise"]').disabled=!legal.has('raise');$('[data-action="allin"]').disabled=!legal.has('allin');
-  $('#swap-action').disabled=!myTurn||game.pendingDuel||(h.moonSwaps<=0&&(game.round>4||game.swaps===0)); $('#swap-left').textContent=game.swaps+h.moonSwaps;$('#skill-action').disabled=!myTurn||game.pendingDuel||game.skillUsed;$('#risk-action').disabled=!myTurn||game.pendingDuel||game.round<5||game.riskChoice!==null;
+  $('#swap-action').disabled=!myTurn||game.pendingDuel||(h.moonSwaps<=0&&(game.round>4||game.swaps===0)); $('#swap-left').textContent=game.swaps+h.moonSwaps;$('#risk-action').disabled=!myTurn||game.pendingDuel||game.round<5||game.riskChoice!==null;
   $('#character-skill-action').disabled=!myTurn||!canUseCharacterSkill(h);
   $('#character-skill-action').title=skillUnavailableReason(h);
-  $('#raise-amount').max=Math.min(3,Math.max(1,h.dao-owed));
+  const raiseAmount=$('#raise-amount'),raiseMax=Math.min(3,Math.max(1,h.dao-owed));raiseAmount.max=raiseMax;raiseAmount.value=Math.min(raiseMax,Math.max(1,+raiseAmount.value||1));raiseAmount.disabled=!legal.has('raise');$('#raise-label').textContent=`+${raiseAmount.value}`;
   const intel=$('#intel-open');if(intel)intel.hidden=!(game.visionTargets?.length||game.visionTarget);
   if(operationBusy)$$('#action-bar button, #action-bar input').forEach(control=>control.disabled=true);
   renderRoundGuide();
@@ -177,7 +232,6 @@ function playerAction(type){
   if(type==='swap'){
     if(h.moonSwaps<=0&&(game.swaps===0||game.round>4))return;$('#swap-dialog-count').textContent=game.swaps+h.moonSwaps;$('#swap-dialog').showModal();return;
   }
-  if(type==='skill'){drawSkill();return;}
   if(type==='risk'){openRiskChoice();return;}
   if(type==='character-skill'){openCharacterSkill(h,true);return;}
   takeAction(h,type,+$('#raise-amount').value);
@@ -256,53 +310,18 @@ function finishGame(){
 }
 
 const tutorialSteps=[
-  {title:'三牌定强弱',body:'每回合你拥有一张明牌、一张暗牌，再与桌面公共牌组成牌组。牌面的右上角数字就是日期相加后的基础牌力。',demo:'<span class="formula">明牌 ＋ 暗牌 ＋ 公共牌</span>'},
-  {title:'先辨明暗',body:'明牌对全席公开，暗牌只有你能看到。观察对手的明牌、余道与下注行为，判断他是在示强还是诈唬。',demo:'明牌 · 全席可见　　暗牌 · 仅你可见'},
-  {title:'朔月逐强',body:'第 1 至 4 回合，三张牌的牌力总和越大越强。若总和相同，则先比较暗牌，再比较明牌。',demo:'朔月：总和越大，牌组越强'},
-  {title:'满月忌盈',body:'第 5 至 8 回合会公布当回合月限，最接近且不超过月限者获胜。超过月限会成为蚀月并失去通常的摊牌资格。',demo:'满月：月限依次为 44、48、52、56'},
-  {title:'把选择留到关键处',body:'每局有两次“易牌”，只能在本回合首次下注前更换明牌。下注依席位轮流进行，可持续加注，直到所有人跟住或弃权。',demo:'易牌 × 2　·　加注次数不限'},
-  {title:'守住最后的道',body:'可用的道降到 0 会进入“道尽·待判”，你仍参与本回合拼点。若赢得本回合月盘则保留资格；若没有赢得道，则在回合结束时直接淘汰。',demo:'道尽 → 拼点 → 胜者保留，败者淘汰'},
-  {title:'先看判断，再做决定',body:'牌桌左上角会实时显示你的当前牌力、月相判定、跟注成本和角色技能状态。选角页可以选择沉浸、标准或快速节奏，对局中也能在右上角切换。',demo:'当前牌力 · 月限距离 · 跟注成本 · 技能状态'},
-  {title:'角色本领',body:'六名角色的本领每回合最多发动一次、整局最多四次。技能逐阶增强，第二阶开始承担牌力或道的代价，第四阶发动后会退出当前回合。',demo:'封月 · 镇岳 · 回枝 · 鹰瞰 · 断势 · 借月'},
-  {title:'满月技能牌',body:'第 5 至 8 回合，轮到你时可以抽取一次技能：易牌、换牌、透视、加牌或送牌。技能会改变信息与牌组，也可能让总和超过当回合月限。',demo:'满月回合 · 每回合抽取一次'}
+  {title:'八回合，守住你的道',body:'每名角色以 20 道入局。每回合仍在场者先投入 1 道，胜者获得月盘；八回合后余道最多者获胜，仅剩一人时则提前结束。',demo:'<div class="tutorial-rounds"><span><b>1–4</b>朔月 · 逐强</span><i></i><span><b>5–8</b>满月 · 忌盈</span></div>'},
+  {title:'三张牌组成牌力',body:'你持有一张全席可见的明牌和一张仅自己可见的暗牌，再与公共牌相加。牌面右上角数字就是该牌的基础牌力。',demo:'<div class="tutorial-cards"><span><small>明牌</small><b>23</b></span><em>＋</em><span class="hidden"><small>暗牌</small><b>?</b></span><em>＋</em><span><small>公共牌</small><b>17</b></span></div>'},
+  {title:'月相改变胜负规则',body:'朔月取总牌力最高者；满月取最接近且不超过月限者。满月若全员超限，则直接比较暗牌，再比较明牌。',demo:'<div class="tutorial-moons"><span><b>朔月 · 1–4</b><strong>总牌力越高越强</strong></span><span><b>满月 · 5–8</b><strong>月限 44 / 48 / 52 / 56</strong></span></div>'},
+  {title:'看清代价再下注',body:'无人加注时可以观望；落后当前注额时选择跟注。拖动滑轨决定额外加注 1–3 道，也可以弃权或尽数投入。',demo:'<div class="tutorial-bet"><span>观望</span><span>跟注</span><label><i></i><b>加注 +2</b></label><span>弃权</span></div>'},
+  {title:'易牌、本领与道尽',body:'普通易牌全局共 2 次，只能在前四回合使用；角色本领独立发动，通常每回合一次。道降至 0 后仍参加本回合拼点，未获胜则淘汰。',demo:'<div class="tutorial-flow"><span>易牌 ×2</span><i>→</i><span>角色本领</span><i>→</i><span class="danger">道尽 · 待判</span></div>'},
+  {title:'满月可以赌命',body:'第 5–8 回合可秘密选择本回合牌力 +10 或 -10。选择后，之后每回合都必须获胜；一旦落败便立即淘汰，并把余道均分给其他角色。',demo:'<div class="tutorial-risk"><span>−10</span><b>赌命</b><span>+10</span></div>'},
+  {title:'六席，各有一主动一被动',body:'主动技能通常每回合可用一次；丹枝的同契每局一次。角色按钮可随时查看完整说明。',demo:'<div class="tutorial-skills"><span><b>霜弦</b>封月 · 霜境</span><span><b>墨岳</b>撼岳 · 镇岳</span><span><b>丹枝</b>同契 · 回枝</span><span><b>星烬</b>鹰瞰 · 追影</span><span><b>夜岚</b>断势 · 逐寂</span><span><b>月栖</b>借月 · 逐月</span></div>'}
 ];
 let tutorialIndex=0;
 function openTutorial(index=0){tutorialIndex=index;renderTutorial();if(!$('#tutorial-dialog').open)$('#tutorial-dialog').showModal();}
-function renderTutorial(){const s=tutorialSteps[tutorialIndex];$('#tutorial-title').textContent=s.title;$('#tutorial-body').textContent=s.body;$('#tutorial-demo').innerHTML=s.demo;$('#tutorial-progress').innerHTML=tutorialSteps.map((_,i)=>`<i class="${i<=tutorialIndex?'active':''}"></i>`).join('');$('#tutorial-next').textContent=tutorialIndex===tutorialSteps.length-1?'开始对局':'下一步';}
+function renderTutorial(){const s=tutorialSteps[tutorialIndex];$('#tutorial-kicker').textContent=`新手教学 · ${tutorialIndex+1}/${tutorialSteps.length}`;$('#tutorial-title').textContent=s.title;$('#tutorial-body').textContent=s.body;$('#tutorial-demo').innerHTML=s.demo;$('#tutorial-progress').innerHTML=tutorialSteps.map((_,i)=>`<i class="${i<=tutorialIndex?'active':''}"></i>`).join('');$('#tutorial-prev').disabled=tutorialIndex===0;$('#tutorial-next').textContent=tutorialIndex===tutorialSteps.length-1?'开始对局':'下一步';}
 function closeTutorial(){localStorage.setItem('shuoWangTutorialSeen','1');$('#tutorial-dialog').close();}
-
-const skillCards=[
-  {name:'易牌',symbol:'易',description:'立即更换自己的明牌。'},
-  {name:'换牌',symbol:'换',description:'选择一名角色，与其互换一张明牌或暗牌。'},
-  {name:'透视',symbol:'视',description:'查看一名角色本回合的暗牌。'},
-  {name:'加牌',symbol:'加',description:'为自己额外抽取一张暗牌，结算时计入总牌力。'},
-  {name:'送牌',symbol:'送',description:'将自己的当前明牌送到指定角色的明牌区，自己补抽一张明牌。'}
-];
-let pendingSkill=null;
-function drawSkill(){
-  if(game.skillUsed)return;game.skillUsed=true;pendingSkill={...skillCards[Math.floor(Math.random()*skillCards.length)],targetId:null,zone:null};
-  $('#skill-title').textContent=pendingSkill.name;$('#skill-art').innerHTML=`<div class="skill-symbol">${pendingSkill.symbol}</div>`;$('#skill-description').textContent=pendingSkill.description;
-  const targets=game.players.filter(p=>!p.out&&!p.human);let targetHtml='';
-  if(pendingSkill.name==='换牌')targetHtml=`<div class="skill-target-list">${targets.flatMap(p=>['visible','hidden'].map(zone=>`<button data-target="${p.id}" data-zone="${zone}" ${!GameRules.canTransferZone(game.players[0],p)?'disabled title="霜境保护"':''}>${p.name} · ${zone==='visible'?'明牌':'暗牌'}${!GameRules.canTransferZone(game.players[0],p)?' · 霜境保护':''}</button>`)).join('')}</div>`;
-  if(pendingSkill.name==='透视'||pendingSkill.name==='送牌')targetHtml=`<div class="skill-target-list">${targets.map(p=>`<button data-target="${p.id}" ${pendingSkill.name==='送牌'&&!GameRules.canTransferZone(game.players[0],p)?'disabled title="霜境保护"':''}>${p.name}${pendingSkill.name==='送牌'&&!GameRules.canTransferZone(game.players[0],p)?' · 霜境保护':''}</button>`).join('')}</div>`;
-  $('#skill-targets').innerHTML=targetHtml;$$('#skill-targets button').forEach(b=>b.onclick=()=>{$$('#skill-targets button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');pendingSkill.targetId=b.dataset.target;pendingSkill.zone=b.dataset.zone||null;});
-  $('#skill-discard').style.display='inline-block';$('#skill-discard').textContent=pendingSkill.name==='加牌'?'放弃此牌':'放弃技能';$('#skill-confirm').textContent=pendingSkill.name==='加牌'?'保留这张暗牌':'使用技能';
-  $('#skill-dialog').showModal();renderActions();
-}
-function applySkill(){
-  if(!pendingSkill||operationBusy)return;const h=game.players[0],target=game.players.find(p=>p.id===pendingSkill.targetId),needsTarget=['换牌','透视','送牌'].includes(pendingSkill.name);if(needsTarget&&!target){announce('请先选择一名角色');return;}
-  if(pendingSkill.name==='换牌'&&!GameRules.canTransferZone(h,target,pendingSkill.zone)){showOutcome('霜境保护','霜弦的牌型不受外部换牌影响');return;}
-  if(pendingSkill.name==='送牌'&&!GameRules.canTransferZone(h,target,'visible')){showOutcome('霜境保护','霜弦不会接收其他角色送来的牌');return;}
-  const skill=pendingSkill;pendingSkill=null;$('#skill-dialog').close();
-  let payload={},commit=()=>{},complete=()=>{},result='';
-  if(skill.name==='易牌'){const old=h.visible,newCard=game.drawPile.shift();payload={oldCard:old,newCard};result=`你的明牌：${old.name}（${old.value}）→ ${newCard.name}（${newCard.value}）`;commit=()=>{h.visible=newCard;setCard($('#visible-card'),h.visible);log(`技能·易牌：${old.name} → ${newCard.name}`);};}
-  if(skill.name==='换牌'){const zone=skill.zone||'visible',old=h[zone],targetCard=target[zone];payload={oldCard:old,targetCard,target,zone};result=`${zone==='visible'?'明牌':'暗牌'}互换：你得到 ${targetCard.name}（${targetCard.value}），${target.name} 得到 ${old.name}（${old.value}）`;commit=()=>{[h[zone],target[zone]]=[targetCard,old];setCard($('#visible-card'),h.visible);setCard($('#hidden-card'),h.hidden);log(`技能·换牌：你与 ${target.name} 互换${zone==='visible'?'明牌':'暗牌'}`);};}
-  if(skill.name==='透视'){payload={target,targetCard:target.hidden};result=`${target.name} 的暗牌：${target.hidden.name}（${target.hidden.value}）`;commit=()=>{game.visionTarget=target;log(`技能·透视：${result}`);};complete=()=>openPanel('vision');}
-  if(skill.name==='加牌'){const newCard=game.drawPile.shift();payload={newCard};result=`${newCard.name}（${newCard.value}）已进入你的暗牌区并计入总点数`;commit=()=>{h.hiddenExtras.push(newCard);log(`技能·加牌：${result}`);};}
-  if(skill.name==='送牌'){const old=h.visible,newCard=game.drawPile.shift();payload={oldCard:old,newCard,target};result=`${old.name}（${old.value}）已移动到 ${target.name} 的明牌区；你补到 ${newCard.name}（${newCard.value}）`;commit=()=>{target.visibleExtras.push(old);h.visible=newCard;setCard($('#visible-card'),h.visible);log(`技能·送牌：${result}`);};}
-  setOperationBusy(true);playCardSkillEffect(skill.name,payload,()=>{commit();renderBoard();renderExtraHidden();renderActions();},()=>{showOutcome(`${skill.name}完成`,result,3000);complete();setOperationBusy(false);});
-}
-function discardSkill(){if(!pendingSkill)return;log(`你放弃了技能牌：${pendingSkill.name}`);announce(`技能牌已放弃 · 本回合不再抽取`);$('#skill-dialog').close();pendingSkill=null;$('#skill-discard').style.display='none';$('#skill-confirm').textContent='确认';renderActions();}
 
 function openPanel(type){
   let html=''; const history=JSON.parse(localStorage.getItem('shuoWangHistory')||'[]');
@@ -311,28 +330,39 @@ function openPanel(type){
   if(type==='cardref')html=`<h2>牌力排行 · 从大到小</h2><div class="ledger-rules"><span>基础牌力 = 月份 + 日期</span><span>${game&&game.round>4?`本回合月限 ${game.moonLimit}`:'朔月：总和越大越强'}</span></div><div class="ledger-table">${[...deck].sort((a,b)=>b.value-a.value).map(c=>`<div class="ledger-item"><strong>${c.name}</strong><span>${cnMonth[c.month]}${cnDay(c.day)}</span><b>${c.value}</b></div>`).join('')}</div>`;
   if(type==='vision'&&(game.visionTargets?.length||game.visionTarget)){const targets=game.visionTargets?.length?game.visionTargets:[game.visionTarget],observer=game.players[0];html=`<h2>月镜情报</h2><p>本回合已揭示暗牌</p><div class="vision-card-grid">${targets.map(p=>`<div><strong>${p.name}</strong><div class="card">${cardHTML(p.hidden)}</div><p>${p.hidden.name} · 基础牌力 ${p.hidden.value}</p>${observer.trackedSkillIds?.includes(p.id)?`<p><b>追影</b> · ${trackedSkillDirection(p)}</p>`:''}</div>`).join('')}</div>`;}
   if(type==='notes')html=`<h2>观月札记</h2><p>牌名之下的日期并非装饰。前三牌相会，数理隐于月相。</p><textarea id="moon-note" maxlength="300" placeholder="记下你的推断……">${localStorage.getItem('shuoWangNote')||''}</textarea>`;
-  if(type==='profile')html=`<h2>${$('#player-name').value||'月下客'}</h2><p>当前角色：${characters[charIndex].title}</p><p>总对局 ${history.length}　·　获胜 ${history.filter(h=>h.rank===1).length}　·　胜率 ${history.length?Math.round(history.filter(h=>h.rank===1).length/history.length*100):0}%</p><p>排位赛：尚未定级</p>`;
+  if(type==='profile'){
+    const wins=history.filter(h=>h.rank===1).length;
+    html=`<div class="profile-overview"><p class="profile-rank">月庭游历者 · 尚未定级</p><div class="profile-stats"><span><b>${history.length}</b>总对局</span><span><b>${wins}</b>胜局</span><span><b>${history.length?Math.round(wins/history.length*100):0}%</b>胜率</span></div><p>所有战绩、牌谱收藏与个人札记均保存在此设备。</p></div>`;
+  }
   if(type==='review'&&game)html=`<h2>月局复盘</h2><table><tr><th>回合</th><th>月相</th><th>公共牌</th><th>月盘</th><th>赢家</th></tr>${game.records.map(r=>`<tr><td>${r.round}</td><td>${r.phase}</td><td>${r.public}</td><td>${r.pot}</td><td>${r.winners}</td></tr>`).join('')}</table>`;
-  $('#panel-content').innerHTML=html;$('#side-panel').showModal(); const note=$('#moon-note');if(note){note.style.cssText='width:100%;height:150px;background:#07100f;color:#dce8df;border:1px solid #526a61;padding:12px';note.oninput=()=>localStorage.setItem('shuoWangNote',note.value);}
+  const accountPanels=['profile','records','atlas','notes'];
+  if(accountPanels.includes(type)){
+    const c=characters[charIndex],name=$('#player-name').value||'月下客';
+    html=`<div class="drawer-account"><img src="${c.portrait}" alt="${c.title}"><div><small>${c.title}</small><h2>${name}</h2><span>${c.trait}</span></div></div><nav class="drawer-nav" aria-label="个人资料导航"><button data-account-panel="profile"${type==='profile'?' class="active"':''}>个人主页</button><button data-account-panel="records"${type==='records'?' class="active"':''}>战绩</button><button data-account-panel="atlas"${type==='atlas'?' class="active"':''}>图鉴</button><button data-account-panel="notes"${type==='notes'?' class="active"':''}>观月札记</button></nav><section class="drawer-section">${html}</section>`;
+  }
+  $('#panel-content').innerHTML=html;
+  const sidePanel=$('#side-panel');
+  if(!sidePanel.open)sidePanel.showModal();
+  $$('[data-account-panel]').forEach(button=>button.onclick=()=>openPanel(button.dataset.accountPanel));
+  const note=$('#moon-note');if(note){note.oninput=()=>localStorage.setItem('shuoWangNote',note.value);}
 }
 
 $('#guest-login').onclick=()=>{$('#home-name').textContent=$('#player-name').value||'月下客';unlockAudio();sfx('turn');showScreen('home-screen')};
-$('#start-game').onclick=()=>{switchMusic('battle');showScreen('select-screen')};$$('.back-home').forEach(b=>b.onclick=()=>{switchMusic('home');showScreen('home-screen')});
+$('#start-game').onclick=beginHomeEntrance;$$('.back-home').forEach(b=>b.onclick=()=>{switchMusic('home');showScreen('home-screen')});
 $('#char-prev').onclick=()=>{charIndex=(charIndex+characters.length-1)%characters.length;renderCharacter()};$('#char-next').onclick=()=>{charIndex=(charIndex+1)%characters.length;renderCharacter()};
 $$('[data-theme-choice]').forEach(button=>button.onclick=()=>applyTheme(button.dataset.themeChoice));$('#theme-quick-toggle').onclick=()=>applyTheme(document.body.dataset.theme==='imperial'?'moon-court':'imperial');
 $$('[data-speed]').forEach(button=>button.onclick=()=>applySpeed(button.dataset.speed));$('#speed-quick-toggle').onclick=()=>{const order=['immersive','standard','fast'];applySpeed(order[(order.indexOf(gameSpeed)+1)%order.length]);};
 $('#ai-count').oninput=e=>$('#ai-count-label').textContent=e.target.value;$$('#difficulty button').forEach(b=>b.onclick=()=>{$$('#difficulty button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');difficulty=b.dataset.value});
-$('#confirm-seat').onclick=newGame;$$('[data-action]').forEach(b=>b.onclick=()=>playerAction(b.dataset.action));$('#raise-amount').oninput=e=>$('#raise-label').textContent=`+${e.target.value}`;
+$('#confirm-seat').onclick=newGame;$$('[data-action]').forEach(b=>b.onclick=()=>playerAction(b.dataset.action));
+$('#raise-amount').oninput=e=>$('#raise-label').textContent=`+${e.target.value}`;
 $('#seats').onclick=e=>{const badge=e.target.closest('[data-skill-player]');if(!badge||!game)return;openCharacterSkill(game.players.find(p=>p.id===badge.dataset.skillPlayer),false);};
 $('#character-skill-close').onclick=()=>$('#character-skill-dialog').close();$('#character-skill-confirm').onclick=activateCharacterSkill;
 $('#round-guide-toggle').onclick=()=>{const guide=$('#round-guide'),collapsed=guide.classList.toggle('collapsed');$('#round-guide-toggle').textContent=collapsed?'+':'−';$('#round-guide-toggle').setAttribute('aria-label',collapsed?'展开本回合判断':'收起本回合判断');};
 $('#next-round').onclick=()=>{$('#round-dialog').close();startRound()};$('#view-toggle').onclick=()=>$('#game-board').classList.toggle('overhead');$('#game-exit').onclick=()=>{scheduler.cancelAll();game=null;switchMusic('home');showScreen('home-screen')};
-$('#intel-open').onclick=()=>openPanel('vision');$('#ledger-open').onclick=()=>openPanel('cardref');$('#tutorial-open').onclick=()=>openTutorial(0);$('#tutorial-next').onclick=()=>{if(tutorialIndex<tutorialSteps.length-1){tutorialIndex++;renderTutorial()}else closeTutorial()};$('#tutorial-skip').onclick=closeTutorial;
-$('#skill-confirm').onclick=applySkill;
-$('#skill-discard').onclick=discardSkill;
+$('#intel-open').onclick=()=>openPanel('vision');$('#ledger-open').onclick=()=>openPanel('cardref');$('#tutorial-open').onclick=()=>openTutorial(0);$('#tutorial-prev').onclick=()=>{if(tutorialIndex>0){tutorialIndex--;renderTutorial()}};$('#tutorial-next').onclick=()=>{if(tutorialIndex<tutorialSteps.length-1){tutorialIndex++;renderTutorial()}else closeTutorial()};$('#tutorial-skip').onclick=closeTutorial;
 $$('[data-risk]').forEach(button=>button.onclick=()=>{if(!game||game.round<5||game.riskChoice!==null)return;const value=button.dataset.risk;game.riskChoice=value;game.riskActive=true;game.riskRound=game.round;game.riskDelta=Number(value);game.awaitingRisk=false;$('#risk-dialog').close();$('#risk-status').textContent='赌命中';log('你选择赌命');announce('系统播报：有人选择赌命');renderBoard();renderActions();schedule(advanceTurn,500)});
 $$('[data-swap-zone]').forEach(button=>button.onclick=()=>applySwap(button.dataset.swapZone));
-$('#return-home').onclick=()=>{scheduler.cancelAll();switchMusic('home');showScreen('home-screen')};$('#review-game').onclick=()=>openPanel('review');$$('.home-nav button').forEach(b=>b.onclick=()=>openPanel(b.dataset.panel));$('#profile-open').onclick=()=>openPanel('profile');$('.dialog-close').onclick=()=>$('#side-panel').close();
+$('#return-home').onclick=()=>{scheduler.cancelAll();switchMusic('home');showScreen('home-screen')};$('#review-game').onclick=()=>openPanel('review');$('#profile-open').onclick=()=>openPanel('profile');$('.dialog-close').onclick=()=>$('#side-panel').close();
 $('#sound-toggle').onclick=()=>{audioOn=!audioOn;$('#sound-toggle').textContent=audioOn?'♪':'×';if(audioOn){unlockAudio();switchMusic(game&&game.round>=5?'full':game&&game.round>0?'battle':'home');sfx('turn')}else stopAmbient();};
 document.addEventListener('pointerdown',()=>{if(audioOn)unlockAudio()},{once:true});
 applyTheme(localStorage.getItem('shuoWangTheme')||'moon-court');applySpeed(gameSpeed);renderCharacter();initSky();
