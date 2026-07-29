@@ -42,14 +42,22 @@ python -m http.server 4317 --bind 127.0.0.1
 
 ## 角色
 
-六名角色规则完全相同，没有固有技能：
+六名角色各有一个四阶固有技能，每回合最多发动一次、整局最多四次；新回合只恢复本回合的发动资格，累计阶数不清零，道尽对决期间全部禁用。主动技能只能在自己的行动席发动，被动技能由结算自动触发。AI 与玩家遵守相同规则。
 
-- 白狐 · 霜弦
-- 黑熊 · 墨岳
-- 赤鹿 · 丹枝
-- 雪鹰 · 星烬
-- 灰狼 · 夜岚
-- 玉兔 · 月栖
+统一代价：第 1 次无代价；第 2 次在朔月牌力 -5、满月牌力 +5；第 3 次在朔月牌力 -15、满月牌力 +15，并扣 3 道；第 4 次扣 5 道并立即退出当前回合。技能扣道后若道尽，进入既有道尽待判流程。
+
+- 白狐 · 霜弦「封月」：锁定任意角色的一张明牌或暗牌，本回合不能被交换或送出。
+- 黑熊 · 墨岳「镇岳」：第 1/2/3 阶跟注减免 1/2/3 道，仍视为完整跟注。
+- 赤鹿 · 丹枝「回枝」：输掉一回但仍存活时自动恢复 2/5/8 道，上限 12。
+- 雪鹰 · 星烬「鹰瞰」：第 1/2/3 阶查看最多 1/2/3 名对手的暗牌直到回合结束。
+- 灰狼 · 夜岚「断势」：第 1/2/3 阶加注后限制最多 1/2/3 名对手下一次只能跟注或弃权。
+- 玉兔 · 月栖「借月」：第 1/2/3 阶通过滑杆秘密选择 ±5/±10/±15 的牌力修正。
+
+每个席位头像旁有单字技能徽记，随时可点击查看技能、剩余次数和当前状态。玩家自己的主动技能通过操作栏“角色技”发动；借月数值只对使用者可见，但摊牌时必须解释实际修正值。
+
+实现时必须区分两个状态：`charSkillUses` 保存整局累计阶数，不能在 `startRound()` 中清零；`charSkillUsed` 只表示本回合是否已经发动，必须在新回合重置。所有技能代价统一通过 `GameRules.characterSkillCost()` 计算，不能在各技能分支中重复硬编码。第三阶扣道导致道归零时必须进入道尽待判；第四阶必须扣除 5 道、设置本回合退场状态并跳过该角色后续行动。
+
+敌方角色的技能解释徽记固定在头像左上方的独立区域，不得覆盖头像主体、角色名或明牌。桌面与移动端修改席位尺寸、明牌位置或徽记尺寸后，都要检查 `.character-skill-badge` 与 `.seat-visible` 的边界不相交。
 
 头像使用项目内 SVG，表现为真实动物头部特征加略显搞怪的表情或配饰。不要退回单纯汉字圆形占位符。
 
@@ -280,3 +288,37 @@ node --check game.js
 - Preview the current project at `http://127.0.0.1:4321/`.
 - Eastern motion motifs live in `ui-polish.css`: moon-gate/cloud silhouettes, lake ripples, lantern sway, lunar pot dial, current-turn light, full-moon acceleration, and the table seal. Keep them CSS-only and preserve reduced-motion support.
 - React Bits-inspired motion is implemented locally in `motion-effects.css` and `motion-effects.js`; no React dependency is used. The shared Canvas renders aurora, full-moon rays and particles, while delegated pointer events provide spotlight, glare, magnet and click-spark feedback.
+- Extra hidden cards from `加牌` are rendered by `renderExtraHidden()` as a poker-like fan to the right of the main hidden card. Every card must keep an exposed strip and support hover, keyboard focus, and mobile tap to reveal its name and value.
+- The character setup panel shows the selected character's skill name and description. `renderCharacter()` must update these fields whenever the portrait changes.
+- `imperial-theme.css` provides the optional 宫灯漆金 theme. Theme state is stored in `shuoWangTheme`; keep the explicit selector on the character setup screen and the compact in-game toggle synchronized through `applyTheme()`.
+- Core logic is split into dependency-free browser/CommonJS modules: `game-data.js`, `game-rules.js`, `game-ai.js`, and `game-runtime.js`. Keep `game.js` focused on DOM rendering and game-flow orchestration.
+- Run `node --test tests\*.test.js` after rule, AI, skill, or timer changes. The suite covers full-moon limits, all-bust dark-card resolution, 道尽 restrictions, 镇岳, 封月, 断势, 借月, 回枝, AI hidden-information fairness, and stale timer cancellation.
+- All game-flow delays must use the scheduler from `game-runtime.js`; call `scheduler.cancelAll()` when starting a new match, starting a new round, or leaving the table. A short-lived decorative cleanup timer in `motion-effects.js` is not game flow.
+- `skill-effects.css` owns the six character-skill cinemas. Each effect must remain between 1 and 3 seconds across the three speed modes, block accidental table actions while active, and provide a reduced-motion fallback.
+- `skill-card-effects.css` owns the shared full-moon card-skill stage. 易牌、换牌、透视、加牌、送牌 use distinct motion while state changes occur at the animation midpoint.
+- The left-side `round-guide` displays the human player's current scored power, phase rule, call cost, and character-skill state. Never reveal another player's secret 借月 direction or hidden card through this panel.
+- `shuoWangSpeed` stores `immersive`, `standard`, or `fast`. Keep setup controls, the in-game compact toggle, AI delays, round transitions, full-moon cinema, and skill cinemas synchronized with the selected speed.
+
+## 2026-07-29 serialized effects update
+
+- 同契的两枚月签为“同月”和“背月”，不再使用 A/B。撼岳复用全屏对决台，目标选择“迎锋”或“敛势”。
+- 所有角色技能、公共技能牌、跟注、加注和结算被动必须串行播放。`operationBusy` 为统一交互锁，忙碌期间玩家和 AI 都不能开始下一项操作。
+- 回合结束固定顺序为：拼点揭示、逐个播放回枝等结算被动、逐个播放逐寂等奖励，最后才打开回合结果对话框。禁止技能影院与回合结果同时出现。
+- 新增会产生视觉反馈的规则时，必须加入既有串行队列或在完成回调中释放操作锁，不得用独立计时器并发推进牌局。
+- 撼岳与同契等“影院 + 效果选择”技能必须先完整播放技能影院，影院关闭后保持 0.5 秒空场，再打开选择界面；选择结束后不得重复播放同一段全屏影院。AI 与玩家使用完全相同的顺序。
+
+## 2026-07-29 skill feedback update
+
+- 所有角色技能和公共技能牌必须在结束时提供结构化结果回执，至少说明发动者、目标、选择、牌或道的变化、持续状态与解除时机。关键结果不能只写入行动日志。
+- 封月必须直接在被封牌面显示“封月 · 0点”，座位状态同时说明明牌或暗牌归零；摊牌计算继续使用 `lockedZone`，不得只做视觉变灰。
+- 换牌、易牌和送牌动画必须清晰展示来源牌、空中移动阶段、目标落点和最终归属。动画结束后的回执必须列出旧牌、新牌、牌力和接收者。
+- `visibleExtras` 中的受赠明牌必须持续显示在目标座位旁，不能等到摊牌才出现。额外牌仍需计入牌力与摊牌说明。
+- 霜境导致换牌或送牌失败时必须明确显示“霜境保护”，不得误报为封月锁定。
+- 鹰瞰的情报面板只能在技能影院结束并空场 0.5 秒后打开；追影建立后，情报面板必须显示目标当前技能使用状态与可公开的使用方向。
+- 回枝、逐寂、镇岳、断势、逐月必须显示明确数值或限制结果，例如恢复前后道数、应付与实付、断势施加者和解除时机、逐月获得次数。
+- AI 发动封月、鹰瞰、借月、撼岳或同契后，必须在演出和结果阶段全部结束后再恢复 `aiDecision()`，不得在影院播放期间尝试下注。
+- 同契的“同月/背月”按钮必须使用一致的墨玉深色背景、月金边框和高对比文字；禁止首个选项继承浅色或白色通用按钮背景。
+- 同契胜负揭示后的“令其本回合弃权/取走 2 道”处置按钮使用专用 `.covenant-outcome` 样式；两个按钮都不得回退到浏览器默认白色背景，移动端需纵向排列并完整显示文字。
+- 玩家通过鹰瞰或透视获得情报后，右上角显示本回合“情报”按钮，可重复打开月镜情报面板；新回合必须清空 `game.visionTargets` 与 `game.visionTarget` 并隐藏入口。
+- 封月牌面必须展示明显的月轮受封视觉、交叉封条、“封”印与 0 点说明，玩家手牌和对手座位明牌使用同一状态语言，并支持 reduced-motion。
+- 封月牌面视觉现使用独立 `.moon-seal` DOM 层：冷却牌面、银色月轮、双向月环、朱砂符片与“牌力归零”标签。禁止退回覆盖整张牌的粗线 X；原牌名和画面必须保持可辨，右上牌力角标必须真实显示为 0。

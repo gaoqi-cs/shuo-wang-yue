@@ -1,0 +1,79 @@
+.card-skill-cinema {
+  --card-skill-duration: 1500ms;
+  position: fixed;
+  z-index: 240;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 48%, rgba(55,104,89,.36), rgba(3,10,9,.9) 62%);
+}
+.card-skill-cinema.active { pointer-events: auto; opacity: 1; animation: cardSkillVeil var(--card-skill-duration) ease both; }
+.card-skill-cinema::before { content:""; position:absolute; width:min(78vw,820px); aspect-ratio:1; border:1px solid rgba(238,215,151,.26); border-radius:50%; box-shadow:inset 0 0 70px rgba(222,198,128,.08),0 0 80px rgba(87,148,129,.1); animation:skillOrbit var(--card-skill-duration) ease-out both; }
+.card-skill-heading { position:absolute; top:11%; display:grid; justify-items:center; gap:5px; z-index:4; text-shadow:0 3px 18px #000; }
+.card-skill-heading span { color:#a8bcb3; font-size:11px; letter-spacing:4px; }
+.card-skill-heading strong { color:#f5dda0; font:400 42px/1 "KaiTi","STKaiti",serif; letter-spacing:0; }
+.card-skill-heading small { color:#d9e4de; font-size:13px; }
+.card-skill-stage { position:relative; width:min(88vw,760px); height:min(54vh,420px); display:flex; align-items:center; justify-content:center; gap:clamp(30px,8vw,100px); perspective:900px; }
+.effect-card { position:relative; width:112px; height:158px; flex:0 0 auto; display:grid; place-items:center; align-content:center; gap:12px; color:#153d34; border:1px solid #c8ad68; background:linear-gradient(155deg,#f3ecd6,#bccdbf); box-shadow:inset 0 0 0 3px rgba(255,255,255,.32),0 22px 55px rgba(0,0,0,.48); }
+.effect-card::after { content:""; position:absolute; inset:6px; border:1px solid rgba(30,82,68,.24); }
+.effect-card small { position:absolute; top:-28px; width:150px; color:#dce7e1; font-size:11px; text-align:center; }
+.effect-card b { position:relative; z-index:2; font:400 24px/1.2 "KaiTi","STKaiti",serif; }
+.effect-card span { position:relative; z-index:2; color:#aa4d36; font-size:24px; font-weight:700; }
+.effect-card.back { color:#e8d797; background:repeating-radial-gradient(circle,#315f52 0 7px,#102a24 8px 13px); border:3px double #d1b970; }
+.effect-card.back span { display:none; }
+.exchange-mark { color:#f4d88f; font:400 28px "KaiTi",serif; text-shadow:0 0 18px #f0c86b; }
+.effect-deck,.effect-stack,.effect-target { width:108px; height:148px; display:grid; place-items:center; border:1px solid rgba(218,190,118,.45); color:#d8c98f; background:rgba(9,29,24,.78); box-shadow:0 18px 45px #0008; }
+.scan-line,.send-path { position:absolute; pointer-events:none; }
+
+.effect-易牌 .effect-card:first-child { animation:oldCardDown var(--card-skill-duration) ease-in both; }
+.effect-易牌 .effect-card:last-child { position:absolute; animation:newCardDrop var(--card-skill-duration) cubic-bezier(.2,.8,.2,1) both; }
+.effect-换牌 .effect-card:first-child { animation:swapLeft var(--card-skill-duration) ease-in-out both; }
+.effect-换牌 .effect-card:last-child { animation:swapRight var(--card-skill-duration) ease-in-out both; }
+.effect-换牌 .exchange-mark { animation:exchangeFlash var(--card-skill-duration) ease both; }
+.effect-透视 .effect-card { animation:visionFlip var(--card-skill-duration) ease-in-out both; }
+.effect-透视 .scan-line { width:150px; height:3px; background:#d7fff2; box-shadow:0 0 12px #79f5d0,0 0 36px #79f5d0; animation:scanCard var(--card-skill-duration) ease-in-out both; }
+.effect-加牌 .effect-card { position:absolute; animation:addCardToStack var(--card-skill-duration) cubic-bezier(.2,.78,.25,1) both; }
+.effect-加牌 .effect-stack { transform:translateX(170px) rotate(2deg); }
+.effect-送牌 .effect-card:first-child { animation:sendCard var(--card-skill-duration) ease-in-out both; }
+.effect-送牌 .effect-card:last-child { position:absolute; opacity:0; animation:replacementCard var(--card-skill-duration) ease-out both; }
+.effect-送牌 .send-path { width:48%; border-top:1px dashed rgba(242,212,130,.7); }
+
+@keyframes cardSkillVeil { 0%,100%{opacity:0} 10%,88%{opacity:1} }
+@keyframes skillOrbit { from{transform:scale(.58) rotate(-18deg);opacity:0} 30%{opacity:1} to{transform:scale(1.08) rotate(24deg);opacity:0} }
+@keyframes oldCardDown { 0%,36%{transform:none;opacity:1} 62%,100%{transform:translateY(170px) rotate(-8deg);opacity:0} }
+@keyframes newCardDrop { 0%,18%{transform:translateY(-62vh) rotate(10deg);opacity:0} 50%,100%{transform:none;opacity:1} }
+@keyframes swapLeft { 0%,18%{transform:none} 50%{transform:translate(170px,-62px) rotate(12deg)} 82%,100%{transform:translateX(calc(100% + clamp(30px,8vw,100px)))} }
+@keyframes swapRight { 0%,18%{transform:none} 50%{transform:translate(-170px,62px) rotate(-12deg)} 82%,100%{transform:translateX(calc(-100% - clamp(30px,8vw,100px)))} }
+@keyframes exchangeFlash { 0%,35%,70%,100%{opacity:.35;transform:scale(.8)} 52%{opacity:1;transform:scale(1.5)} }
+@keyframes visionFlip { 0%,24%{transform:rotateY(0)} 55%,100%{transform:rotateY(180deg);filter:brightness(1.5)} }
+@keyframes scanCard { 0%,20%{transform:translateY(-86px);opacity:0} 34%{opacity:1} 72%{transform:translateY(86px);opacity:1} 82%,100%{opacity:0} }
+@keyframes addCardToStack { 0%,18%{transform:translate(-150px,-60vh) rotate(-10deg);opacity:0} 46%{transform:translate(-150px,0);opacity:1} 78%,100%{transform:translate(170px,10px) rotate(6deg) scale(.92);opacity:1} }
+@keyframes sendCard { 0%,20%{transform:none;opacity:1} 68%{transform:translateX(calc(100% + clamp(30px,8vw,100px))) scale(.82) rotate(8deg);opacity:1} 86%,100%{transform:translateX(calc(100% + clamp(30px,8vw,100px))) scale(.7);opacity:0} }
+@keyframes replacementCard { 0%,55%{transform:translateY(80px);opacity:0} 82%,100%{transform:translateX(calc(-100% - clamp(30px,8vw,100px)));opacity:1} }
+
+body[data-theme="imperial"] .card-skill-cinema { background:radial-gradient(circle at 50% 48%,rgba(144,48,29,.38),rgba(18,4,3,.93) 64%); }
+body[data-theme="imperial"] .effect-card { color:#5b2117; background:linear-gradient(155deg,#f3dfa9,#caae68); border-color:#d39d43; }
+body[data-theme="imperial"] .effect-deck,
+body[data-theme="imperial"] .effect-stack,
+body[data-theme="imperial"] .effect-target { background:rgba(58,15,10,.82); }
+
+@media (max-width:600px){
+  .card-skill-heading { top:8%; }
+  .card-skill-heading strong { font-size:34px; }
+  .card-skill-stage { gap:22px; height:52vh; }
+  .effect-card,.effect-deck,.effect-stack,.effect-target { width:84px; height:122px; }
+  .effect-加牌 .effect-stack { transform:translateX(105px); }
+  @keyframes addCardToStack { 0%,18%{transform:translate(-100px,-60vh);opacity:0} 46%{transform:translate(-100px,0);opacity:1} 78%,100%{transform:translate(105px,8px) rotate(6deg) scale(.9);opacity:1} }
+}
+@media (prefers-reduced-motion:reduce){
+  .card-skill-cinema.active,.card-skill-cinema::before,.card-skill-cinema * { animation-duration:420ms !important; }
+}
+
+/* Card travel keeps a readable source, airborne phase, and final ownership. */
+.effect-换牌 .effect-card,.effect-送牌 .effect-card{z-index:3;will-change:transform,filter}.effect-换牌 .card-skill-stage:after,.effect-送牌 .card-skill-stage:after{content:"";position:absolute;left:16%;right:16%;top:50%;height:1px;border-top:1px dashed rgba(244,216,142,.65);filter:drop-shadow(0 0 8px #e8c878)}.effect-target{position:relative}.effect-target:after{content:"落点";position:absolute;bottom:12px;color:#f0d58b;font-size:10px}.effect-换牌 .effect-card{box-shadow:0 28px 62px #000b,0 0 0 1px rgba(245,219,143,.25)}
+@keyframes swapLeft{0%,16%{transform:translate3d(0,0,0) rotate(0);filter:brightness(1)}48%{transform:translate3d(170px,-78px,90px) rotate(12deg);filter:brightness(1.22)}82%,100%{transform:translate3d(calc(100% + clamp(30px,8vw,100px)),0,0) rotate(0);filter:brightness(1)}}
+@keyframes swapRight{0%,16%{transform:translate3d(0,0,0) rotate(0);filter:brightness(1)}48%{transform:translate3d(-170px,78px,120px) rotate(-12deg);filter:brightness(1.22)}82%,100%{transform:translate3d(calc(-100% - clamp(30px,8vw,100px)),0,0) rotate(0);filter:brightness(1)}}
+@keyframes sendCard{0%,18%{transform:translate3d(0,0,0);opacity:1}55%{transform:translate3d(150px,-64px,100px) rotate(8deg) scale(.92);opacity:1}82%{transform:translate3d(calc(100% + clamp(30px,8vw,100px)),0,0) rotate(0) scale(.78);opacity:1}100%{transform:translate3d(calc(100% + clamp(30px,8vw,100px)),0,0) scale(.78);opacity:0}}

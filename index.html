@@ -8,8 +8,11 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="table-theme.css?v=3">
   <link rel="stylesheet" href="cinema-fix.css?v=1">
-  <link rel="stylesheet" href="ui-polish.css?v=2">
+  <link rel="stylesheet" href="ui-polish.css?v=7">
   <link rel="stylesheet" href="motion-effects.css?v=2">
+  <link rel="stylesheet" href="imperial-theme.css?v=2">
+  <link rel="stylesheet" href="skill-effects.css?v=1">
+  <link rel="stylesheet" href="skill-card-effects.css?v=1">
 </head>
 <body>
   <canvas id="sky" aria-hidden="true"></canvas>
@@ -76,12 +79,21 @@
           </div>
         </div>
         <aside class="setup-panel">
-          <div class="skill-line"><span>角色技能</span><strong>暂无</strong></div>
+          <div class="skill-line character-skill-summary"><span>角色技能</span><div><strong id="character-skill-name">封月</strong><small id="character-skill-summary">锁定自己的明牌或暗牌，本回合不能被换走或送出。</small></div></div>
+          <label>牌局主题</label>
+          <div class="segmented theme-segmented" aria-label="牌局主题">
+            <button class="selected" type="button" data-theme-choice="moon-court">原有月庭</button>
+            <button type="button" data-theme-choice="imperial">宫灯漆金</button>
+          </div>
           <label>人机数量 <b id="ai-count-label">3</b></label>
           <input id="ai-count" type="range" min="2" max="5" value="3">
           <label>对局难度</label>
           <div class="segmented" id="difficulty">
             <button data-value="初见">初见</button><button class="selected" data-value="弦月">弦月</button><button data-value="蚀月">蚀月</button>
+          </div>
+          <label>对局节奏</label>
+          <div class="segmented speed-segmented" id="game-speed" aria-label="对局节奏">
+            <button data-speed="immersive">沉浸</button><button class="selected" data-speed="standard">标准</button><button data-speed="fast">快速</button>
           </div>
           <button class="primary" id="confirm-seat">确认入席</button>
         </aside>
@@ -92,9 +104,26 @@
       <header class="game-header">
         <div><small id="phase-name">朔月</small><strong>第 <span id="round-number">1</span> / 8 回</strong><span class="moon-limit" id="moon-limit"></span><span class="risk-status" id="risk-status"></span></div>
         <div class="phase-moon" id="phase-moon"><i></i></div>
-        <div class="game-tools"><button class="tool-button" id="tutorial-open">新手</button><button class="tool-button compact" id="ledger-open" title="查看全部牌力">牌力</button><button class="icon-button" id="view-toggle" title="切换俯视" aria-label="切换俯视">◎</button><button class="icon-button" id="game-exit" title="返回月庭" aria-label="返回月庭">×</button></div>
+        <div class="game-tools"><button class="tool-button compact theme-quick-toggle" id="theme-quick-toggle" title="切换牌局主题" aria-label="切换原有月庭与宫灯漆金主题">漆</button><button class="tool-button compact" id="speed-quick-toggle" title="切换对局节奏" aria-label="切换对局节奏">标</button><button class="tool-button" id="tutorial-open">新手</button><button class="tool-button compact intel-open" id="intel-open" title="查看本回合已知情报" hidden>情报</button><button class="tool-button compact" id="ledger-open" title="查看全部牌力">牌力</button><button class="icon-button" id="view-toggle" title="切换俯视" aria-label="切换俯视">◎</button><button class="icon-button" id="game-exit" title="返回月庭" aria-label="返回月庭">×</button></div>
       </header>
       <div class="announcement" id="announcement"></div>
+      <div class="effect-result" id="effect-result" role="status" aria-live="polite"><strong id="effect-result-title"></strong><span id="effect-result-detail"></span></div>
+      <aside class="round-guide" id="round-guide" aria-live="polite">
+        <button class="round-guide-toggle" id="round-guide-toggle" aria-label="收起本回合判断">−</button>
+        <strong>本回合判断</strong>
+        <div class="round-guide-score"><span>当前牌力</span><b id="guide-power">0</b></div>
+        <p id="guide-rule">朔月：总点数越大越强</p>
+        <p id="guide-call">当前可观望</p>
+        <p id="guide-skill">角色技能可用</p>
+      </aside>
+      <div class="skill-cinema" id="skill-cinema" aria-live="assertive" aria-hidden="true">
+        <div class="skill-cinema-art"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="skill-cinema-copy"><span id="skill-cinema-owner"></span><strong id="skill-cinema-name"></strong><small id="skill-cinema-line"></small></div>
+      </div>
+      <div class="card-skill-cinema" id="card-skill-cinema" aria-live="assertive" aria-hidden="true">
+        <div class="card-skill-heading"><span>满月术式</span><strong id="card-skill-name"></strong><small id="card-skill-line"></small></div>
+        <div class="card-skill-stage" id="card-skill-stage"></div>
+      </div>
       <div class="game-board" id="game-board">
         <div class="full-moon-cinema" id="full-moon-cinema" aria-hidden="true"><div class="cinema-moon"><i></i></div><p>满月升起</p><small>月律改变 · 月限已启</small></div>
         <div class="court-decor" aria-hidden="true"><i class="lantern left"></i><i class="lantern right"></i><span class="moon-gate"></span><span class="cloud-band"></span><span class="balustrade"></span></div>
@@ -120,6 +149,7 @@
         <button data-action="check" id="check-action">观望</button>
         <button data-action="call">跟注</button>
         <button class="swap-action" data-action="swap" id="swap-action">易牌 <span id="swap-left">2</span></button>
+        <button class="character-skill-action" data-action="character-skill" id="character-skill-action">角色技</button>
         <button class="skill-action" data-action="skill" id="skill-action">抽技能</button>
         <button class="risk-action" data-action="risk" id="risk-action">赌命</button>
         <div class="raise-control"><button data-action="raise">加注</button><input id="raise-amount" type="range" min="1" max="3" value="1"><b id="raise-label">+1</b></div>
@@ -148,9 +178,15 @@
     <div class="tutorial-actions"><button class="secondary" id="tutorial-skip">暂时跳过</button><button class="primary" id="tutorial-next">下一步</button></div>
   </dialog>
   <dialog id="skill-dialog" class="skill-dialog"><p class="eyebrow">满月技能</p><h2 id="skill-title"></h2><div id="skill-art"></div><p id="skill-description"></p><div id="skill-targets"></div><div class="skill-actions"><button class="secondary" id="skill-discard">放弃此牌</button><button class="primary" id="skill-confirm">确认</button></div></dialog>
+  <dialog id="covenant-dialog" class="skill-dialog covenant-dialog"><p class="eyebrow">月下对决</p><h2 id="covenant-title"></h2><p id="covenant-copy"></p><div id="covenant-choices" class="covenant-choices"><button type="button" onclick="chooseCovenant('同月')">同月<small>心念映照同一轮月</small></button><button type="button" onclick="chooseCovenant('背月')">背月<small>各向月影的两端</small></button></div><div id="covenant-result" hidden></div></dialog>
+  <dialog id="character-skill-dialog" class="skill-dialog character-skill-dialog"><p class="eyebrow">角色本领</p><h2 id="character-skill-title"></h2><div id="character-skill-art"></div><p id="character-skill-description"></p><p class="character-skill-state" id="character-skill-state"></p><div id="character-skill-options"></div><div class="skill-actions"><button class="secondary" id="character-skill-close">关闭</button><button class="primary" id="character-skill-confirm">发动</button></div></dialog>
   <dialog id="risk-dialog" class="skill-dialog"><p class="eyebrow">满月赌命</p><h2>选择赌命方向</h2><p>方向只对你可见。当前回合结算时总点数会加 10 或减 10；之后每回合都必须获胜，否则直接淘汰并均分剩余道。</p><div class="skill-actions"><button class="secondary" data-risk="-10">赌命 · -10</button><button class="primary" data-risk="10">赌命 · +10</button></div></dialog>
   <dialog id="swap-dialog" class="skill-dialog"><p class="eyebrow">朔月易牌</p><h2>选择要更换的牌</h2><p>本局剩余 <b id="swap-dialog-count">2</b> 次机会。</p><div class="skill-actions"><button class="secondary" data-swap-zone="visible">更换明牌</button><button class="primary" data-swap-zone="hidden">更换暗牌</button></div></dialog>
-  <script src="game.js?v=4"></script>
+  <script src="game-data.js?v=2"></script>
+  <script src="game-rules.js?v=3"></script>
+  <script src="game-ai.js?v=3"></script>
+  <script src="game-runtime.js?v=1"></script>
+  <script src="game.js?v=10"></script>
   <script src="motion-effects.js?v=2"></script>
 </body>
 </html>

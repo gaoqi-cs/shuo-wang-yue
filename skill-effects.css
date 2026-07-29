@@ -1,0 +1,127 @@
+.round-guide {
+  position: absolute;
+  z-index: 12;
+  top: 88px;
+  left: 18px;
+  width: 226px;
+  padding: 14px 16px;
+  border-top: 1px solid rgba(234, 211, 141, .42);
+  background: rgba(5, 15, 12, .88);
+  box-shadow: 0 14px 34px rgba(0,0,0,.3);
+  color: #dce7df;
+  transition: background .25s;
+}
+.round-guide > strong { display: block; margin-bottom: 10px; color: #f0dda2; font: 18px "KaiTi", "STKaiti", serif; }
+.round-guide p { margin: 6px 0 0; color: #aabdb4; font-size: 11px; line-height: 1.55; }
+.round-guide-score { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid rgba(210,226,217,.12); padding-bottom: 8px; }
+.round-guide-score span { color: #91a79e; font-size: 11px; }
+.round-guide-score b { color: #fff0b1; font-size: 25px; font-weight: 400; }
+.round-guide-toggle { position: absolute; top: 7px; right: 7px; width: 32px; min-width: 32px; height: 32px; padding: 0; border: 0; color: #b9ccc2; background: transparent; font-size: 20px; }
+.round-guide.collapsed { width: 46px; height: 46px; padding: 0; overflow: hidden; background: rgba(5,15,12,.92); }
+.round-guide.collapsed > :not(.round-guide-toggle) { visibility: hidden; }
+
+.skill-cinema {
+  --skill-duration: 2.1s;
+  position: absolute;
+  z-index: 50;
+  inset: 0;
+  display: none;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+}
+.skill-cinema.active { display: grid; pointer-events:auto; animation: skillBackdrop var(--skill-duration) cubic-bezier(.16,1,.3,1) both; }
+.skill-cinema:before, .skill-cinema:after { content:""; position:absolute; inset:0; z-index:-2; }
+.skill-cinema:before { background: radial-gradient(circle at center, rgba(234,211,141,.24), rgba(2,6,5,.9) 58%, #010302 100%); }
+.skill-cinema:after { z-index:-1; opacity:.38; background: repeating-conic-gradient(from 0deg at 50% 50%, transparent 0 11deg, rgba(244,219,139,.12) 12deg 13deg, transparent 14deg 30deg); animation: skillDial var(--skill-duration) ease-out both; }
+.skill-cinema-art { position: relative; width: 330px; height: 330px; display:grid; place-items:center; }
+.skill-cinema-art i { position:absolute; display:block; }
+.skill-cinema-copy { position:absolute; left:50%; top:50%; min-width:310px; text-align:center; transform:translate(-50%,105px); text-shadow:0 4px 20px #000; }
+.skill-cinema-copy span { display:block; color:#c6b681; font-size:12px; }
+.skill-cinema-copy strong { display:block; margin:5px 0; color:#fff0b1; font:52px "KaiTi", "STKaiti", serif; font-weight:400; }
+.skill-cinema-copy small { color:#d9dfd6; font-size:13px; }
+.skill-cinema.active .skill-cinema-copy { animation: skillCopy var(--skill-duration) cubic-bezier(.16,1,.3,1) both; }
+
+@keyframes skillBackdrop { 0%,100%{opacity:0;backdrop-filter:blur(0)} 12%,82%{opacity:1;backdrop-filter:blur(6px)} }
+@keyframes skillDial { from{transform:rotate(-18deg) scale(.7);opacity:0} 35%{opacity:.38} to{transform:rotate(42deg) scale(1.2);opacity:0} }
+@keyframes skillCopy { 0%{opacity:0;filter:blur(14px);translate:0 24px} 25%,74%{opacity:1;filter:blur(0);translate:0 0} 100%{opacity:0;filter:blur(10px);translate:0 -12px} }
+
+/* 封月: two lunar gates close around a sealed card. */
+.skill-封月:before { background: radial-gradient(circle,#dfe8dc 0 13%,#36564b 14% 22%,rgba(2,8,6,.94) 23% 100%); animation: sealIris var(--skill-duration) ease-in-out both; }
+.skill-封月 .skill-cinema-art:before,.skill-封月 .skill-cinema-art:after { content:"";position:absolute;top:42px;bottom:42px;width:128px;border:2px solid #e9d28b;background:linear-gradient(90deg,#07110f,#193c33);box-shadow:0 15px 45px #000;animation:sealGate var(--skill-duration) cubic-bezier(.16,1,.3,1) both; }
+.skill-封月 .skill-cinema-art:before{right:50%;border-radius:140px 0 0 140px;--gate-start:-170px}.skill-封月 .skill-cinema-art:after{left:50%;border-radius:0 140px 140px 0;--gate-start:170px}
+.skill-封月 .skill-cinema-art i { width:160px;height:160px;border:1px solid rgba(245,220,141,.5);border-radius:50%;animation:sealRune var(--skill-duration) ease-out both; }
+.skill-封月 .skill-cinema-art i:nth-child(2){width:204px;height:204px;animation-direction:reverse}.skill-封月 .skill-cinema-art i:nth-child(n+3){display:none}
+@keyframes sealGate{0%{translate:var(--gate-start) 0;opacity:0}30%,76%{translate:0 0;opacity:1}100%{opacity:0}}
+@keyframes sealIris{0%,100%{clip-path:circle(100%)}28%,76%{clip-path:circle(28%)}}
+@keyframes sealRune{0%{rotate:-60deg;scale:.4;opacity:0}35%,75%{rotate:0;scale:1;opacity:1}100%{rotate:35deg;scale:1.2;opacity:0}}
+
+/* 镇岳: a bronze mountain seal lands with two shock rings. */
+.skill-镇岳:before { background:radial-gradient(circle at 50% 58%,rgba(231,176,76,.4),rgba(13,10,5,.94) 46%,#030302); }
+.skill-镇岳 .skill-cinema-art:before{content:"";position:absolute;left:50%;top:30px;width:230px;height:210px;translate:-50% 0;background:linear-gradient(145deg,#f0cc78,#6d4e25 58%,#281c0e);clip-path:polygon(50% 0,95% 80%,78% 74%,66% 92%,34% 92%,22% 74%,5% 80%);filter:drop-shadow(0 30px 22px #000);animation:mountainDrop var(--skill-duration) cubic-bezier(.12,.8,.18,1) both}
+.skill-镇岳 .skill-cinema-art i:nth-child(-n+2){width:230px;height:72px;border:2px solid #e6be68;border-radius:50%;top:210px;animation:mountainWave var(--skill-duration) ease-out both}.skill-镇岳 .skill-cinema-art i:nth-child(2){animation-delay:.12s}.skill-镇岳 .skill-cinema-art i:nth-child(n+3){display:none}
+@keyframes mountainDrop{0%{translate:-50% -220px;scale:.65;opacity:0}28%,76%{translate:-50% 0;scale:1;opacity:1}100%{translate:-50% 12px;opacity:0}}
+@keyframes mountainWave{0%,28%{scale:.2;opacity:0}38%{opacity:1}80%,100%{scale:1.9;opacity:0}}
+
+/* 回枝: six cinnabar branches regrow around a silver moon seed. */
+.skill-回枝:before{background:radial-gradient(circle at center,rgba(191,75,55,.34),rgba(7,20,14,.94) 55%,#020503)}
+.skill-回枝 .skill-cinema-art:before{content:"";width:82px;height:82px;border-radius:50%;background:#e9e8d2;box-shadow:0 0 60px rgba(222,238,214,.5);animation:branchSeed var(--skill-duration) ease-in-out both}
+.skill-回枝 .skill-cinema-art i{left:50%;top:50%;width:7px;height:142px;border-radius:8px;background:linear-gradient(#e6cf80,#a74335 55%,transparent);transform-origin:50% 100%;transform:translate(-50%,-100%) rotate(calc(var(--branch)*60deg));animation:branchGrow var(--skill-duration) cubic-bezier(.16,1,.3,1) both}
+.skill-回枝 .skill-cinema-art i:nth-child(1){--branch:0}.skill-回枝 .skill-cinema-art i:nth-child(2){--branch:1}.skill-回枝 .skill-cinema-art i:nth-child(3){--branch:2}.skill-回枝 .skill-cinema-art i:nth-child(4){--branch:3}.skill-回枝 .skill-cinema-art i:nth-child(5){--branch:4}.skill-回枝 .skill-cinema-art i:nth-child(6){--branch:5}
+@keyframes branchGrow{0%,15%{scale:1 0;opacity:0}45%,76%{scale:1 1;opacity:1}100%{scale:.7 1.15;opacity:0}}
+@keyframes branchSeed{0%,100%{scale:.3;opacity:0}35%,75%{scale:1;opacity:1}}
+
+/* 鹰瞰: a sharp celestial eye scans the table. */
+.skill-鹰瞰:before{background:linear-gradient(120deg,rgba(3,8,9,.98),rgba(45,75,77,.86),rgba(3,8,9,.98))}
+.skill-鹰瞰 .skill-cinema-art:before{content:"";width:280px;height:140px;border:3px solid #d8e7df;border-radius:70% 0 70% 0;rotate:45deg;box-shadow:inset 0 0 44px #071312,0 0 55px rgba(189,222,218,.3);animation:eagleEye var(--skill-duration) ease-in-out both}
+.skill-鹰瞰 .skill-cinema-art:after{content:"";width:76px;height:76px;border-radius:50%;background:radial-gradient(circle,#fff9cc 0 10%,#152f30 12% 38%,#d5e4dd 40% 48%,#071110 50%);box-shadow:0 0 35px #d8f1e7;animation:eaglePupil var(--skill-duration) ease-in-out both}
+.skill-鹰瞰 .skill-cinema-art i{width:2px;height:300px;background:linear-gradient(transparent,#d9eee5,transparent);rotate:calc(var(--ray)*30deg);animation:eagleRay var(--skill-duration) ease-out both}.skill-鹰瞰 .skill-cinema-art i:nth-child(1){--ray:0}.skill-鹰瞰 .skill-cinema-art i:nth-child(2){--ray:1}.skill-鹰瞰 .skill-cinema-art i:nth-child(3){--ray:2}.skill-鹰瞰 .skill-cinema-art i:nth-child(4){--ray:3}.skill-鹰瞰 .skill-cinema-art i:nth-child(5){--ray:4}.skill-鹰瞰 .skill-cinema-art i:nth-child(6){--ray:5}
+@keyframes eagleEye{0%,100%{scale:.2 0;opacity:0}30%,75%{scale:1;opacity:1}}
+@keyframes eaglePupil{0%,100%{scale:.2;opacity:0}38%,72%{scale:1;opacity:1}}
+@keyframes eagleRay{0%,30%{scale:1 0;opacity:0}50%,75%{scale:1 1;opacity:.6}100%{opacity:0}}
+
+/* 断势: two vermilion blades cross and sever the action ring. */
+.skill-断势:before{background:radial-gradient(circle,rgba(172,44,35,.45),rgba(15,4,4,.96) 58%,#020101)}
+.skill-断势 .skill-cinema-art:before{content:"";width:270px;height:270px;border:2px dashed #d96a4d;border-radius:50%;animation:breakRing var(--skill-duration) ease-out both}
+.skill-断势 .skill-cinema-art i{width:420px;height:10px;background:linear-gradient(90deg,transparent,#ffefb0 30%,#d52f25 52%,transparent);box-shadow:0 0 28px #f0442d;rotate:var(--slash-angle);animation:breakSlash var(--skill-duration) cubic-bezier(.16,1,.3,1) both}.skill-断势 .skill-cinema-art i:nth-child(1){--slash-angle:28deg}.skill-断势 .skill-cinema-art i:nth-child(2){--slash-angle:150deg;animation-delay:.12s}.skill-断势 .skill-cinema-art i:nth-child(n+3){display:none}
+@keyframes breakSlash{0%,14%{translate:-420px 0;opacity:0}34%,72%{translate:0 0;opacity:1}100%{translate:180px 0;opacity:0}}
+@keyframes breakRing{0%{scale:.3;opacity:0}35%{scale:1;opacity:1}55%{clip-path:polygon(0 0,46% 0,46% 100%,0 100%)}100%{scale:1.5;opacity:0}}
+
+/* 借月: two opposed moons exchange places without revealing the chosen sign. */
+.skill-借月:before{background:radial-gradient(circle,rgba(204,207,178,.25),rgba(7,13,18,.95) 56%,#020304)}
+.skill-借月 .skill-cinema-art i:nth-child(-n+2){width:128px;height:128px;border-radius:50%;background:#edf0d8;box-shadow:0 0 58px rgba(228,238,213,.46);animation:borrowMoonA var(--skill-duration) ease-in-out both}.skill-借月 .skill-cinema-art i:nth-child(2){background:#172925;box-shadow:inset 0 0 0 2px #d4c786,0 0 44px rgba(210,188,102,.28);animation-name:borrowMoonB}.skill-借月 .skill-cinema-art i:nth-child(n+3){width:250px;height:250px;border:1px solid rgba(235,215,144,.3);border-radius:50%;animation:borrowOrbit var(--skill-duration) ease-out both}.skill-借月 .skill-cinema-art i:nth-child(n+4){display:none}
+@keyframes borrowMoonA{0%,100%{translate:-150px 0;opacity:0}28%{translate:-72px 0;opacity:1}72%{translate:72px 0;opacity:1}}
+@keyframes borrowMoonB{0%,100%{translate:150px 0;opacity:0}28%{translate:72px 0;opacity:1}72%{translate:-72px 0;opacity:1}}
+@keyframes borrowOrbit{0%{rotate:-90deg;scale:.5;opacity:0}35%,70%{scale:1;opacity:1}100%{rotate:90deg;scale:1.25;opacity:0}}
+
+body[data-theme="imperial"] .round-guide { background:rgba(36,10,7,.91);border-top-color:rgba(232,181,85,.62) }
+body[data-theme="imperial"] .round-guide p { color:#c3aa82 }
+body[data-theme="imperial"] .skill-cinema:before { filter:sepia(.28) saturate(1.24) }
+body[data-speed="fast"] .full-moon-cinema.active,
+body[data-speed="fast"] .full-moon-cinema.active p,
+body[data-speed="fast"] .full-moon-cinema.active small,
+body[data-speed="fast"] .full-moon-cinema.active .cinema-moon { animation-duration:3.3s }
+body[data-speed="fast"] .full-moon-cinema.active small { animation-delay:.18s }
+body[data-speed="fast"] .full-moon-cinema.active .cinema-moon i { animation-duration:1.15s; animation-delay:.5s }
+body[data-speed="immersive"] .full-moon-cinema.active,
+body[data-speed="immersive"] .full-moon-cinema.active p,
+body[data-speed="immersive"] .full-moon-cinema.active small,
+body[data-speed="immersive"] .full-moon-cinema.active .cinema-moon { animation-duration:8.1s }
+body[data-speed="immersive"] .full-moon-cinema.active small { animation-delay:.45s }
+body[data-speed="immersive"] .full-moon-cinema.active .cinema-moon i { animation-duration:2.8s; animation-delay:1.25s }
+
+@media(max-width:760px){
+  .round-guide{top:68px;left:6px;width:190px;padding:10px 12px}.round-guide>strong{font-size:15px;margin-bottom:7px}.round-guide p{font-size:10px;margin-top:3px}.round-guide-score{padding-bottom:5px}.round-guide-score b{font-size:20px}
+  .skill-cinema-art{width:260px;height:260px;scale:.78}.skill-cinema-copy{min-width:260px;transform:translate(-50%,84px)}.skill-cinema-copy strong{font-size:42px}
+}
+@media(max-width:420px){.round-guide{width:164px}.round-guide.collapsed{width:42px;height:42px}.round-guide p{line-height:1.35}.skill-cinema-copy strong{font-size:36px}}
+@media(prefers-reduced-motion:reduce){.skill-cinema.active{animation:skillReduced 1s ease-out both}.skill-cinema.active .skill-cinema-art{display:none}.skill-cinema.active .skill-cinema-copy{animation:none;opacity:1}.skill-cinema:after{animation:none}@keyframes skillReduced{0%,100%{opacity:0}15%,85%{opacity:1}}}
+ .covenant-dialog{max-width:680px;text-align:center}.covenant-choices{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:28px 0}.covenant-choices button{min-height:150px;font-size:3rem;border:1px solid #c9a45c;background:radial-gradient(circle at 50% 35%,#273c34,#07110f 72%);color:#f3e6bd}.covenant-choices button small{display:block;margin-top:10px;font-size:12px;font-weight:400;color:#c9bea0}.covenant-dialog[open]{animation:covenant-in .45s cubic-bezier(.16,1,.3,1)}.operation-busy #action-bar{pointer-events:none;filter:saturate(.55);opacity:.68}@keyframes covenant-in{from{opacity:0;transform:scale(.92);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}@media(prefers-reduced-motion:reduce){.covenant-dialog[open]{animation:none}}
+.effect-result{position:fixed;z-index:270;left:50%;top:16%;width:min(520px,88vw);padding:14px 18px;translate:-50% -18px;opacity:0;pointer-events:none;text-align:center;border:1px solid rgba(232,202,120,.55);background:#06110fee;color:#dce7df;box-shadow:0 18px 50px #0009;transition:opacity .2s ease,translate .3s cubic-bezier(.16,1,.3,1)}.effect-result.show{opacity:1;translate:-50% 0}.effect-result strong{display:block;color:#f3dda0;font:22px "KaiTi","STKaiti",serif}.effect-result span{display:block;margin-top:5px;font-size:13px;line-height:1.55}.seat-visible.sealed-card{filter:saturate(.35) brightness(.72)}.seat-visible.sealed-card:after{content:"封月 · 0点";position:absolute;inset:0;display:grid;place-items:center;color:#fff0b1;background:#07110fd9;border:1px solid #d9c16f;font-weight:700}.seat-extra-visible{position:absolute;left:calc(100% + 46px);top:8px;min-width:78px;padding:5px 7px;color:#173f35;background:#f0e7c9;border:1px solid #c79f4f;box-shadow:0 8px 18px #0008;font-size:9px}.seat-extra-visible:before{content:"受赠明牌";display:block;color:#8a3e2c;font-size:8px}.skill-state-mark{position:absolute;left:50%;top:100%;translate:-50% 5px;white-space:nowrap;padding:3px 7px;color:#f5dea0;background:#07110fe8;border:1px solid #8d7441;font-size:9px}
+.card.sealed-card{filter:saturate(.35) brightness(.72)}.card.sealed-card:after{content:"封月 · 0点";position:absolute;inset:0;z-index:6;display:grid;place-items:center;color:#fff0b1;background:#07110fe8;border:1px solid #d9c16f;font-weight:700}
+.covenant-dialog .covenant-choices>button,.covenant-dialog .covenant-choices>button:first-child,.covenant-dialog .covenant-choices>button:last-child{appearance:none!important;color:#f3e6bd!important;background:radial-gradient(circle at 50% 28%,#29483d 0,#132c25 38%,#07110f 100%)!important;border:1px solid #c9a45c!important;box-shadow:inset 0 0 0 1px rgba(255,240,184,.08),0 14px 30px #0008!important;text-shadow:0 2px 10px #000!important}.covenant-dialog .covenant-choices>button:hover,.covenant-dialog .covenant-choices>button:focus-visible{color:#fff4c9!important;background:radial-gradient(circle at 50% 28%,#365e50 0,#17372e 42%,#091713 100%)!important;border-color:#f0cf78!important;outline:2px solid #f0cf78;outline-offset:3px}.covenant-dialog .covenant-choices>button small{color:#d4c69e!important;text-shadow:none}
+.card.sealed-card,.seat-visible.sealed-card{filter:saturate(.3) brightness(.68);box-shadow:inset 0 0 0 3px #07110f,0 0 0 2px #d7bd6a,0 14px 36px #000b!important}.card.sealed-card:after,.seat-visible.sealed-card:after{content:"封\A封月 · 0点";white-space:pre;position:absolute;inset:0;z-index:8;display:grid;place-items:center;padding-top:18px;color:#fff0b1;font:700 15px/1.6 "KaiTi","STKaiti",serif;text-align:center;background:linear-gradient(38deg,transparent 43%,rgba(211,174,78,.92) 44% 47%,#30110d 48% 52%,rgba(211,174,78,.92) 53% 56%,transparent 57%),linear-gradient(-38deg,transparent 43%,rgba(211,174,78,.92) 44% 47%,#30110d 48% 52%,rgba(211,174,78,.92) 53% 56%,transparent 57%),radial-gradient(circle at 50% 42%,#ecedda 0 18%,#9cae9e 19% 22%,rgba(5,16,13,.92) 23% 100%);border:1px solid #d9c16f;text-shadow:0 2px 8px #000;animation:sealedMoonIn .42s cubic-bezier(.16,1,.3,1) both}@keyframes sealedMoonIn{from{opacity:0;transform:scale(1.16) rotate(-5deg);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}@media(prefers-reduced-motion:reduce){.card.sealed-card:after,.seat-visible.sealed-card:after{animation:none}}
+.intel-open:not([hidden]){color:#f3dda0;border-color:#a98d4f;background:#10241f;box-shadow:inset 0 -2px rgba(218,181,89,.15)}
+.covenant-outcomes{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.covenant-dialog .covenant-outcome{appearance:none!important;min-width:158px;min-height:54px;padding:0 18px!important;color:#f5e7b8!important;background:#102a24!important;border:1px solid #b9964f!important;box-shadow:inset 0 0 0 1px rgba(244,220,151,.08),0 10px 22px #0007!important;text-shadow:0 1px 5px #000!important;font-weight:700!important}.covenant-dialog .covenant-outcome:hover,.covenant-dialog .covenant-outcome:focus-visible{color:#fff5cf!important;background:#193b32!important;border-color:#e3c46f!important;outline:2px solid #e3c46f;outline-offset:3px}.covenant-dialog .fold-outcome{background:#142b26!important}.covenant-dialog .dao-outcome{background:#173b32!important}@media(max-width:480px){.covenant-outcomes{display:grid;grid-template-columns:1fr}.covenant-dialog .covenant-outcome{width:100%;min-width:0}}
+.card.sealed-card:after,.seat-visible.sealed-card:after{display:none!important}.card.sealed-card,.seat-visible.sealed-card{filter:saturate(.48) brightness(.72) contrast(1.04);overflow:hidden;isolation:isolate}.moon-seal{position:absolute;z-index:12;inset:0;display:grid;place-items:center;overflow:hidden;pointer-events:none;background:linear-gradient(180deg,rgba(3,11,10,.22),rgba(2,9,8,.62));animation:moonSealVeil .68s cubic-bezier(.16,1,.3,1) both}.seal-halo{position:absolute;width:74%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(230,239,225,.32),rgba(142,178,163,.12) 44%,transparent 70%);filter:blur(4px);animation:sealHaloBreathe 2.8s ease-in-out .7s infinite}.seal-moon{position:relative;width:48%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 36% 30%,#fbf6d6 0 10%,#d8dfce 36%,#8ca69a 72%,#415d54 100%);border:1px solid rgba(255,239,180,.78);box-shadow:inset -10px -12px 18px rgba(26,55,48,.55),0 0 18px rgba(222,238,214,.44);animation:sealMoonRise .72s cubic-bezier(.16,1,.3,1) both}.seal-moon b{display:grid;place-items:center;width:44%;aspect-ratio:1;color:#f5df9a;background:#7b221c;border:1px solid #e8c669;box-shadow:0 5px 14px #0009;font:700 clamp(13px,2vw,22px)/1 "KaiTi","STKaiti",serif;transform:rotate(45deg);animation:sealStamp .45s cubic-bezier(.16,1,.3,1) .48s both}.seal-moon b:after{content:"封";transform:rotate(-45deg)}.seal-moon b{font-size:0}.seal-orbit{position:absolute;width:76%;height:38%;border:1px solid rgba(239,218,148,.82);border-radius:50%;box-shadow:0 0 10px rgba(230,202,113,.25);animation:sealOrbitLock .8s cubic-bezier(.16,1,.3,1) both}.orbit-one{transform:rotate(28deg)}.orbit-two{transform:rotate(-28deg);animation-delay:.08s}.seal-talisman{position:absolute;width:14%;height:72%;background:linear-gradient(90deg,#6d1d18,#b54430 45%,#7a211a);border:1px solid #d5a755;box-shadow:0 8px 20px #0008;clip-path:polygon(18% 0,82% 0,100% 8%,84% 16%,100% 24%,84% 32%,100% 40%,84% 48%,100% 56%,84% 64%,100% 72%,84% 80%,100% 88%,82% 100%,18% 100%,0 88%,16% 80%,0 72%,16% 64%,0 56%,16% 48%,0 40%,16% 32%,0 24%,16% 16%,0 8%);opacity:.68;animation:sealTalismanDrop .68s cubic-bezier(.16,1,.3,1) .24s both}.moon-seal em{position:absolute;bottom:8%;padding:3px 8px;color:#f5e4ad;background:rgba(4,13,11,.84);border:1px solid rgba(222,191,103,.52);font:normal 10px/1.2 "KaiTi","STKaiti",serif;letter-spacing:0;animation:sealLabelIn .35s ease-out .65s both}@keyframes moonSealVeil{from{opacity:0;backdrop-filter:blur(0)}to{opacity:1;backdrop-filter:blur(1px)}}@keyframes sealMoonRise{from{opacity:0;transform:scale(.35);filter:blur(10px)}to{opacity:1;transform:scale(1);filter:none}}@keyframes sealOrbitLock{from{opacity:0;scale:1.65;rotate:-55deg}to{opacity:1;scale:1;rotate:0}}@keyframes sealStamp{from{opacity:0;scale:2.2;filter:blur(5px)}to{opacity:1;scale:1;filter:none}}@keyframes sealTalismanDrop{from{opacity:0;translate:0 -120%}to{opacity:.68;translate:0 0}}@keyframes sealLabelIn{from{opacity:0;translate:0 8px}to{opacity:1;translate:0 0}}@keyframes sealHaloBreathe{0%,100%{opacity:.45;scale:.92}50%{opacity:.82;scale:1.08}}.seat-visible .moon-seal em{font-size:7px;bottom:4%}.seat-visible .seal-talisman{width:12%}@media(prefers-reduced-motion:reduce){.moon-seal,.moon-seal *{animation:none!important}.seal-halo{opacity:.62}}
