@@ -16,6 +16,6 @@ test('道尽玩家不会进入对决响应名单',()=>{const source={...player('
 test('封月使锁定牌本回合不计分',()=>{const p=player('p',{visible:12,hidden:8});p.lockedZone='visible';assert.equal(rules.basePower(p,card(10)),18);});
 test('断势限制下一次行动为跟注或弃权',()=>{const p=player('p');p.raiseBlockedOnce=true;assert.deepEqual(rules.legalActions(p,{currentTurnId:'p',highBet:3,pendingDuel:false}),['fold','call']);});
 test('回枝触发不超过三次',()=>{const deer=player('deer');deer.char.skill.passiveName='回枝';deer.branchRecoveries=2;assert.equal(rules.shouldRecoverBranch(deer,[]),true);deer.branchRecoveries=3;assert.equal(rules.shouldRecoverBranch(deer,[]),false);});
-test('霜境阻止外部换牌和送牌',()=>{const source=player('source'),target=player('target');target.char.skill.passiveName='霜境';assert.equal(rules.canTransferZone(source,target),false);});
+test('霜境允许牌型交互但会向指定霜弦者施加下一回合霜痕',()=>{const source=player('source'),target=player('target');target.char.skill.passiveName='霜境';assert.equal(rules.canTransferZone(source,target),true);assert.equal(rules.frostMarkUntilRound(source,target,3),4);assert.equal(rules.frostMarkUntilRound(source,player('other'),3),0);});
 test('逐月要求明暗牌同在公共牌一侧',()=>{assert.equal(rules.moonAligned(player('high',{visible:12,hidden:11}),card(10)),true);assert.equal(rules.moonAligned(player('split',{visible:12,hidden:8}),card(10)),false);});
 test('淘汰状态会阻止回枝恢复',()=>{const deer=player('deer');deer.char.skill.name='回枝';deer.dao=2;deer.out=true;assert.equal(rules.shouldRecoverBranch(deer,[]),false);});

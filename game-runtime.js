@@ -5,5 +5,8 @@
     function cancelAll(){generation++;timers.forEach(clearTimeout);timers.clear();}
     return {schedule,cancelAll,pendingCount:()=>timers.size,generation:()=>generation};
   }
-  return {SPEEDS,createScheduler};
+  function canResolveSkillChoice(state,actorId,phase){return !!state&&state.phase===phase&&state.decisionMakerId===actorId&&!state.resolved;}
+  function covenantWinnerId(initiatorId,targetId,initiatorChoice,targetChoice){return initiatorChoice===targetChoice?initiatorId:targetId;}
+  function skillInvolvesHuman(initiator,target){return !!(initiator?.human||target?.human);}
+  return {SPEEDS,createScheduler,canResolveSkillChoice,covenantWinnerId,skillInvolvesHuman};
 });

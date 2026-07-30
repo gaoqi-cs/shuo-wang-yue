@@ -10,8 +10,9 @@
     const sorted=[...contenders].sort((a,b)=>b.hidden.value-a.hidden.value||b.visible.value-a.visible.value);return {winners:sorted.length?[sorted[0]]:[],allBustDarkTie:true};
   }
   function shouldRecoverBranch(player,winners){return player.char?.skill?.passiveName==='回枝'&&!player.out&&!winners.includes(player)&&(player.branchRecoveries||0)<3;}
-  function canTransferZone(source,target){return source?.char?.skill?.passiveName!=='霜境'&&target?.char?.skill?.passiveName!=='霜境';}
+  function canTransferZone(){return true;}
+  function frostMarkUntilRound(source,target,round){return target?.char?.skill?.passiveName==='霜境'&&source!==target?Math.max(source.frostMarkRound||0,round+1):source.frostMarkRound||0;}
   function moonAligned(player,publicCard){return (player.visible.value>publicCard.value&&player.hidden.value>publicCard.value)||(player.visible.value<publicCard.value&&player.hidden.value<publicCard.value);}
   function pendingDuelResponders(players,sourceId){return players.filter(player=>!player.out&&!player.folded&&!player.pendingOut&&player.id!==sourceId).map(player=>player.id);}
-  return {basePower,scoredPower,callPayment,legalActions,determineWinners,shouldRecoverBranch,canTransferZone,moonAligned,pendingDuelResponders};
+  return {basePower,scoredPower,callPayment,legalActions,determineWinners,shouldRecoverBranch,canTransferZone,frostMarkUntilRound,moonAligned,pendingDuelResponders};
 });

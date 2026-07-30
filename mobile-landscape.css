@@ -1,0 +1,92 @@
+/* Phone play is intentionally landscape: portrait protects the game from cramped controls. */
+#orientation-lock { display:none; }
+
+@media (pointer: coarse) {
+  html, body { min-height:100%; overscroll-behavior:none; }
+  #app, #sky { inset:0; }
+  button, input { touch-action:manipulation; }
+}
+
+@media (pointer: coarse) and (orientation: portrait) and (max-width: 900px) {
+  #app, #sky, dialog, .effect-result { visibility:hidden; }
+  #orientation-lock {
+    position:fixed;
+    z-index:9999;
+    inset:0;
+    display:grid;
+    place-content:center;
+    justify-items:center;
+    gap:12px;
+    padding:max(28px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+    color:#edf0df;
+    text-align:center;
+    background:radial-gradient(circle at 50% 28%, #284d42 0, #10241f 30%, #07100f 72%);
+  }
+  .orientation-moon { width:74px; aspect-ratio:1; border-radius:50%; background:#edf0df; box-shadow:0 0 0 12px rgba(201,169,107,.1), 0 0 46px rgba(223,234,220,.42); }
+  #orientation-lock strong { font-size:22px; font-weight:500; }
+  #orientation-lock p { margin:0; color:#c5d2ca; font-size:14px; }
+}
+
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 600px) {
+  body { padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  #game-screen .game-header { height:56px; padding:7px max(10px, env(safe-area-inset-right)) 6px max(10px, env(safe-area-inset-left)); }
+  #game-screen .phase-moon { left:max(9px, env(safe-area-inset-left)); top:8px; width:36px; height:36px; }
+  #game-screen .game-header > div:first-child { padding-left:45px; }
+  #game-screen .game-header small { font-size:9px; letter-spacing:1.5px; }
+  #game-screen .game-header strong { font-size:12px; margin-top:2px; }
+  #game-screen .game-tools { top:7px; right:max(8px, env(safe-area-inset-right)); gap:5px; }
+  #game-screen .game-tools .tool-button, #game-screen .game-tools .icon-button { width:40px; min-width:40px; height:40px; min-height:40px; padding:0; }
+  #game-screen .game-tools .tool-button:not(.compact) { font-size:0; }
+
+  #game-screen .moon-table { width:min(72vw, 740px); height:min(48vw, 390px); max-height:70vh; top:48%; }
+  #game-screen .public-zone { top:7%; }
+  #game-screen .pot-core { width:84px; height:84px; }
+  #game-screen .pot-core strong { font-size:25px; }
+  #game-screen .seat { width:82px; }
+  #game-screen .seat-avatar { width:40px; height:40px; border-width:1px; }
+  #game-screen .seat-name { margin-top:2px; font-size:10px; }
+  #game-screen .seat-stats, #game-screen .seat-status { font-size:9px; }
+  #game-screen .seat-status { max-width:82px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #game-screen .seat-visible { left:calc(50% + 16px); top:0; width:43px; height:51px; padding:3px; }
+  #game-screen .seat-visible b { font-size:9px; }
+  #game-screen .seat-visible span { font-size:11px; right:3px; top:2px; }
+  #game-screen .human-seat { left:max(10%, calc(env(safe-area-inset-left) + 7%)) !important; top:76% !important; }
+
+  #game-screen .round-guide { top:61px; left:max(7px, env(safe-area-inset-left)); width:142px; max-width:142px; padding:7px 9px; }
+  #game-screen .round-guide > strong { font-size:11px; }
+  #game-screen .round-guide-score { margin-block:4px; }
+  #game-screen .round-guide-score b { font-size:20px; }
+  #game-screen .round-guide p { display:none; }
+  #game-screen .player-hand { bottom:62px; gap:4px; padding:0 6px; }
+  #game-screen .player-hand .card { width:58px; height:84px; padding:5px; }
+  #game-screen .hand-meta { margin-left:2px; padding-left:5px; font-size:8px; }
+
+  #game-screen .action-bar { min-height:60px; height:60px; padding:6px max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left)); justify-content:flex-start; overflow-x:auto; overflow-y:hidden; gap:5px; scrollbar-width:none; }
+  #game-screen .action-bar::-webkit-scrollbar { display:none; }
+  #game-screen .action-cluster { flex:none; gap:4px; padding-right:5px; }
+  #game-screen .action-bar button { flex:none; min-width:62px; min-height:44px; padding:0 9px; font-size:11px; }
+  #game-screen .raise-control { flex:none; height:44px; padding-inline:6px; }
+  #game-screen .raise-title { min-width:35px; font-size:11px; }
+  #game-screen .raise-slider { min-width:116px; height:42px; }
+  #game-screen .raise-control input { width:54px; }
+
+  .skill-dialog, #side-panel, #round-dialog, .tutorial-dialog { width:min(640px, 88vw); max-height:calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 18px); overflow:auto; }
+  .covenant-dialog { width:min(580px, 82vw); }
+  .covenant-choices { gap:10px; margin:14px 0; }
+  .covenant-choices button { min-height:96px; font-size:clamp(28px, 6vw, 42px); }
+  .covenant-dialog .covenant-outcome { min-height:46px; }
+  .tutorial-dialog h2 { font-size:22px; }
+  .tutorial-demo { min-height:96px; margin:12px 0; }
+  .tutorial-actions button { min-height:42px; }
+  .effect-result { top:10%; width:min(520px, 78vw); }
+}
+
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 390px) {
+  #game-screen .round-guide { display:none; }
+  #game-screen .moon-table { width:68vw; top:47%; }
+  #game-screen .seat-avatar { width:35px; height:35px; }
+  #game-screen .player-hand .card { width:50px; height:72px; }
+  #game-screen .player-hand { bottom:57px; }
+  #game-screen .action-bar { height:56px; min-height:56px; }
+  #game-screen .action-bar button, #game-screen .raise-control { min-height:40px; height:40px; }
+}

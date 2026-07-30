@@ -16,6 +16,13 @@ android-app/app/release/
 *.apks
 *.jks
 *.keystore
+*.zip
+*.tar
+*.tar.gz
+*.7z
+.env
+.env.*
+!.env.example
 
 # Dependency and runtime caches
 node_modules/
@@ -23,6 +30,9 @@ node_modules/
 .cache/
 coverage/
 .nyc_output/
+playwright-report/
+test-results/
+.playwright/
 
 # Logs
 *.log

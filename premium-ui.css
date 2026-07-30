@@ -872,8 +872,9 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 }
 .action-bar button:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--ui-line-gold); color: #fff0bf; background: #1b3c31; }
 .action-bar button:disabled { opacity: .32; filter: saturate(.4); cursor: not-allowed; }
-.raise-slider { min-width: 142px; height: 42px; padding: 0 10px; display: flex; align-items: center; gap: 10px; cursor: ew-resize; }
-.raise-control input { width: 98px; cursor: ew-resize; }
+.raise-slider { min-width: 142px; height: 42px; padding: 0 10px; display: flex; align-items: center; gap: 10px; }
+.raise-control input { width: 98px; }
+.raise-title { min-width: 44px; color: #f3dfa5; font-size: 12px; font-weight: 700; text-align: center; }
 .raise-control input::-webkit-slider-runnable-track { height: 5px; border-radius: 3px; background: linear-gradient(90deg, #d9b86d, #53645d); }
 .raise-control input::-webkit-slider-thumb { width: 18px; height: 18px; margin-top: -6px; appearance: none; border: 2px solid #f0d184; border-radius: 50%; background: #e8e9df; box-shadow: 0 4px 12px rgba(0,0,0,.46); }
 .raise-control input::-moz-range-track { height: 5px; border-radius: 3px; background: #53645d; }
@@ -943,6 +944,16 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 .tutorial-skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--ui-line); }
 .tutorial-skills span { min-height: 54px; padding: 10px 12px; display: grid; gap: 3px; background: #0a1c17; color: #aebfb7; font-size: 11px; }
 .tutorial-skills b { color: #f0d28c; font-size: 13px; }
+.tutorial-rule-list { width: min(100%, 660px); display: grid; gap: 9px; color: #c7d7cf; font-size: 13px; line-height: 1.6; }
+.tutorial-rule-list p { margin: 0; padding: 8px 0; border-bottom: 1px solid rgba(170, 193, 180, .16); }
+.tutorial-rule-list p:last-child { border-bottom: 0; }
+.tutorial-rule-list b { color: #f0d28c; }
+.tutorial-actions #tutorial-skill-atlas { margin-left: auto; }
+.skill-atlas-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.skill-atlas-list section { padding: 12px; border: 1px solid var(--ui-line); background: rgba(8, 23, 18, .66); }
+.skill-atlas-list h3 { margin: 0 0 8px; color: var(--ui-gold); font-size: 16px; }
+.skill-atlas-list p { margin: 7px 0 0; color: #bdd0c6; font-size: 12px; line-height: 1.6; }
+.skill-atlas-list b { color: #f0d28c; }
 
 /* Dialogs and results */
 dialog {
@@ -1057,6 +1068,7 @@ body[data-theme="imperial"] .action-bar { background: linear-gradient(180deg, rg
   .tutorial-flow { flex-wrap: wrap; gap: 7px; }
   .tutorial-flow i { display: none; }
   .tutorial-skills { grid-template-columns: repeat(2, 1fr); }
+  .skill-atlas-list { grid-template-columns: 1fr; }
   .tutorial-actions { align-items: stretch; }
   .tutorial-actions > div { flex: 1; justify-content: flex-end; }
   .tutorial-actions button { min-width: 78px; padding: 0 12px; }
