@@ -352,6 +352,9 @@ function openPanel(type){
 }
 
 $('#guest-login').onclick=()=>{$('#home-name').textContent=$('#player-name').value||'月下客';unlockAudio();sfx('turn');showScreen('home-screen')};
+function updateImmersiveButtons(){const active=Boolean(document.fullscreenElement||document.webkitFullscreenElement||navigator.standalone);$$('.immersive-toggle').forEach(button=>{button.textContent=active?'⛶':'⛶';button.title=active?'退出沉浸模式':'进入沉浸模式';button.setAttribute('aria-label',button.title);});document.documentElement.classList.toggle('immersive-mode',active);}
+async function toggleImmersive(){try{const active=document.fullscreenElement||document.webkitFullscreenElement;if(active){if(document.exitFullscreen)await document.exitFullscreen();else if(document.webkitExitFullscreen)document.webkitExitFullscreen();}else{const root=document.documentElement;if(root.requestFullscreen)await root.requestFullscreen({navigationUI:'hide'});else if(root.webkitRequestFullscreen)root.webkitRequestFullscreen();}}catch(error){document.documentElement.classList.add('immersive-requested');}updateImmersiveButtons();}
+$$('.immersive-toggle').forEach(button=>button.onclick=toggleImmersive);document.addEventListener('fullscreenchange',updateImmersiveButtons);document.addEventListener('webkitfullscreenchange',updateImmersiveButtons);updateImmersiveButtons();
 $('#start-game').onclick=beginHomeEntrance;$$('.back-home').forEach(b=>b.onclick=()=>{switchMusic('home');showScreen('home-screen')});
 $('#char-prev').onclick=()=>{charIndex=(charIndex+characters.length-1)%characters.length;renderCharacter()};$('#char-next').onclick=()=>{charIndex=(charIndex+1)%characters.length;renderCharacter()};
 $$('[data-theme-choice]').forEach(button=>button.onclick=()=>applyTheme(button.dataset.themeChoice));$('#theme-quick-toggle').onclick=()=>applyTheme(document.body.dataset.theme==='imperial'?'moon-court':'imperial');

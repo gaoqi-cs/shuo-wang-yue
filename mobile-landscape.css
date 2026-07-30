@@ -142,6 +142,13 @@ html.orientation-required #orientation-lock p { margin:0; color:#c5d2ca; font-si
   #game-screen .game-board { inset:6px 8px 6px; }
   #game-screen .action-bar { left:8px; right:8px; bottom:6px; border-radius:4px; padding-left:max(8px, env(safe-area-inset-left)); padding-right:max(8px, env(safe-area-inset-right)); }
   #game-screen .game-header { left:8px; right:8px; }
+  .home-tools { display:flex; gap:4px; }
+  .immersive-toggle { font-size:20px; }
+  html.immersive-mode #app { inset:0; }
+  html.immersive-mode #game-screen .game-board { inset:0; }
+  html.immersive-mode #game-screen .action-bar { left:0; right:0; bottom:0; }
+  html.immersive-mode #game-screen .game-header { left:0; right:0; }
+  html.immersive-requested .immersive-toggle { border-color:#d9bd75; color:#e6cb83; }
 }
 
 @media (pointer: coarse) and (orientation: landscape) and (max-height: 480px) {

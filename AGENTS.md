@@ -350,4 +350,5 @@ node --check game.js
 - 手机网页以横屏为完整布局，竖屏显示旋转提示；更新网页资源后同步 Android WebView 资源并重新构建 APK。
 - `mobile-landscape.css` 必须同时适配登录页、选角页和牌局页；使用 `dvh`、安全区和基于可用高度的 `clamp()`，避免只缩放牌桌而让首页标题或底部控件溢出。移动端组件四周至少保留 6-8px 内边距。
 - 横屏提示不能只依赖 CSS `orientation` 媒体查询；`orientation-support.js` 必须使用 `visualViewport`/`innerWidth` 与 `innerHeight` 运行时判断，并监听 `resize`、`orientationchange`，兼容 iPhone Safari 和 Android WebView。
+- 手机网页提供应用内“进入沉浸模式”按钮，必须在用户点击后请求 Fullscreen API；不能声称网页能无权限强制隐藏 iOS Safari 浏览器栏。全屏状态变化后重新应用 `visualViewport` 布局。
 - GitHub 发布由维护者手动完成，遵循 `GITHUB-WORKFLOW.md`；不要自动执行 commit、push 或远程仓库写操作。

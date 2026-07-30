@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#07100f">
   <title>朔望月</title>
   <link rel="stylesheet" href="styles.css">
@@ -45,7 +48,7 @@
           <span class="profile-copy"><strong id="home-name">月下客</strong><small>月庭游历者</small></span>
         </button>
         <div class="brand-small">朔望月</div>
-        <button class="icon-button" id="sound-toggle" title="切换声音" aria-label="切换声音">♪</button>
+        <div class="home-tools"><button class="icon-button immersive-toggle" id="home-immersive-toggle" title="进入沉浸模式" aria-label="进入沉浸模式">⛶</button><button class="icon-button" id="sound-toggle" title="切换声音" aria-label="切换声音">♪</button></div>
       </header>
       <div class="courtyard">
         <div class="distant-moon"></div>
@@ -144,7 +147,7 @@
       <header class="game-header">
         <div><small id="phase-name">朔月</small><strong>第 <span id="round-number">1</span> / 8 回</strong><span class="moon-limit" id="moon-limit"></span><span class="risk-status" id="risk-status"></span></div>
         <div class="phase-moon" id="phase-moon"><i></i></div>
-        <div class="game-tools"><button class="tool-button compact theme-quick-toggle" id="theme-quick-toggle" title="切换牌局主题" aria-label="切换原有月庭与宫灯漆金主题">漆</button><button class="tool-button compact" id="speed-quick-toggle" title="切换对局节奏" aria-label="切换对局节奏">标</button><button class="tool-button" id="tutorial-open">新手</button><button class="tool-button compact intel-open" id="intel-open" title="查看本回合已知情报" hidden>情报</button><button class="tool-button compact" id="ledger-open" title="查看全部牌力">牌力</button><button class="icon-button" id="view-toggle" title="切换俯视" aria-label="切换俯视">◎</button><button class="icon-button" id="game-exit" title="返回月庭" aria-label="返回月庭">×</button></div>
+        <div class="game-tools"><button class="tool-button compact immersive-toggle" id="game-immersive-toggle" title="进入沉浸模式" aria-label="进入沉浸模式">⛶</button><button class="tool-button compact theme-quick-toggle" id="theme-quick-toggle" title="切换牌局主题" aria-label="切换原有月庭与宫灯漆金主题">漆</button><button class="tool-button compact" id="speed-quick-toggle" title="切换对局节奏" aria-label="切换对局节奏">标</button><button class="tool-button" id="tutorial-open">新手</button><button class="tool-button compact intel-open" id="intel-open" title="查看本回合已知情报" hidden>情报</button><button class="tool-button compact" id="ledger-open" title="查看全部牌力">牌力</button><button class="icon-button" id="view-toggle" title="切换俯视" aria-label="切换俯视">◎</button><button class="icon-button" id="game-exit" title="返回月庭" aria-label="返回月庭">×</button></div>
       </header>
       <div class="announcement" id="announcement"></div>
       <div class="effect-result" id="effect-result" role="status" aria-live="polite"><strong id="effect-result-title"></strong><span id="effect-result-detail"></span></div>
@@ -223,7 +226,7 @@
   <script src="game-rules.js?v=4"></script>
   <script src="game-ai.js?v=3"></script>
   <script src="game-runtime.js?v=1"></script>
-  <script src="game.js?v=15"></script>
+  <script src="game.js?v=16"></script>
   <script src="motion-effects.js?v=2"></script>
 </body>
 </html>
