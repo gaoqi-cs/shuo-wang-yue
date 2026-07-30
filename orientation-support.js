@@ -3,6 +3,7 @@
 
   var root = document.documentElement;
   var lock = document.getElementById('orientation-lock');
+  var rotateButton = document.getElementById('orientation-rotate');
   var app = document.getElementById('app');
   var media = window.matchMedia ? window.matchMedia('(pointer: coarse)') : null;
 
@@ -29,9 +30,19 @@
 
   function requestLandscape() {
     var orientation = screen.orientation;
+    var rootElement = document.documentElement;
+    var fullscreen = rootElement.requestFullscreen || rootElement.webkitRequestFullscreen;
+    if (fullscreen) {
+      var fullResult = fullscreen.call(rootElement, { navigationUI: 'hide' });
+      if (fullResult && fullResult.catch) fullResult.catch(function () {});
+    }
     if (orientation && orientation.lock) {
       var promise = orientation.lock('landscape');
       if (promise && promise.catch) promise.catch(function () {});
+    }
+    if (rotateButton) {
+      rotateButton.textContent = '请将手机横向旋转';
+      window.setTimeout(function () { rotateButton.textContent = '旋转横屏'; }, 1800);
     }
   }
 
@@ -43,4 +54,5 @@
   if (window.visualViewport) window.visualViewport.addEventListener('resize', update, { passive: true });
   if (media && media.addEventListener) media.addEventListener('change', update);
   if (lock) lock.addEventListener('click', requestLandscape);
+  if (rotateButton) rotateButton.addEventListener('click', requestLandscape);
 }());

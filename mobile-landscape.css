@@ -23,6 +23,7 @@ html.orientation-required #orientation-lock {
 html.orientation-required .orientation-moon { width:74px; aspect-ratio:1; border-radius:50%; background:#edf0df; box-shadow:0 0 0 12px rgba(201,169,107,.1), 0 0 46px rgba(223,234,220,.42); }
 html.orientation-required #orientation-lock strong { font-size:22px; font-weight:500; }
 html.orientation-required #orientation-lock p { margin:0; color:#c5d2ca; font-size:14px; }
+html.orientation-required #orientation-rotate { min-width:168px; min-height:46px; margin-top:6px; }
 
 @media (pointer: coarse) {
   html, body { min-height:100%; overscroll-behavior:none; }
@@ -180,8 +181,8 @@ html.orientation-required #orientation-lock p { margin:0; color:#c5d2ca; font-si
   #home-screen .mountains { bottom:20%; height:25%; }
   #home-screen .lake { height:29%; }
   #home-screen .table-silhouette { bottom:3%; width:min(58vw, 600px); height:min(18vw, 120px); opacity:.45; }
-  #home-screen .home-character-stage { left:clamp(18px, 7vw, 110px); top:clamp(66px, 15dvh, 120px); width:clamp(180px, 27vw, 330px); }
-  #home-screen .home-seat-scene { transform:scale(.58); transform-origin:50% 100%; margin-bottom:clamp(-160px, -12dvh, -58px); }
+  #home-screen .home-character-stage { left:clamp(18px, 7vw, 110px); top:clamp(46px, 8dvh, 82px); width:clamp(180px, 27vw, 330px); transform:translateY(clamp(-92px, -10dvh, -38px)); }
+  #home-screen .home-seat-scene { transform:scale(.48); transform-origin:50% 100%; margin-bottom:clamp(-130px, -10dvh, -48px); }
   #home-screen .home-character-caption { width:clamp(140px, 18vw, 210px); margin-top:clamp(-32px, -4dvh, -12px); padding:7px; }
   #home-screen .home-character-caption strong { font-size:clamp(16px, 3dvh, 24px); }
   #home-screen .home-command { top:clamp(78px, 17dvh, 140px); right:clamp(18px, 6vw, 90px); width:min(43vw, 520px); }
