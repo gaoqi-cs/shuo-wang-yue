@@ -90,3 +90,44 @@
   #game-screen .action-bar { height:56px; min-height:56px; }
   #game-screen .action-bar button, #game-screen .raise-control { min-height:40px; height:40px; }
 }
+
+/* Fit the whole touch surface to the usable landscape viewport, including
+   browsers that report a taller layout viewport than the visible one. */
+@media (pointer: coarse) and (orientation: landscape) {
+  html, body { width:100%; min-width:0; height:100%; min-height:100dvh; }
+  body { overflow:hidden; }
+  #app { inset:max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); }
+
+  #login-screen { padding:clamp(10px, 2.5dvh, 24px) 20px; }
+  #login-screen .brand-lockup { transform:translateY(clamp(-20px, -2dvh, -8px)); }
+  #login-screen .moon-mark { width:clamp(64px, 15dvh, 100px); height:clamp(64px, 15dvh, 100px); }
+  #login-screen .brand-lockup h1 { margin:clamp(8px, 1.8dvh, 18px) 0 3px; font-size:clamp(38px, 8dvh, 70px); letter-spacing:clamp(5px, 1.2dvh, 10px); }
+  #login-screen .brand-lockup .eyebrow { margin:clamp(5px, 1dvh, 12px) 0; font-size:clamp(9px, 1.8dvh, 12px); }
+  #login-screen .subtitle { margin:clamp(4px, 1dvh, 12px) 0; font-size:clamp(12px, 2.2dvh, 16px); letter-spacing:clamp(1px, .7dvh, 4px); }
+  #login-screen .login-actions { width:min(360px, 78vw); gap:clamp(6px, 1.2dvh, 12px); }
+  #login-screen .name-field { padding:clamp(3px, .8dvh, 8px) 2px; }
+  #login-screen .name-field input { padding:clamp(6px, 1.3dvh, 10px); }
+  #login-screen .login-actions button { min-height:clamp(40px, 7dvh, 48px); }
+  #login-screen .version { bottom:max(8px, env(safe-area-inset-bottom)); }
+
+  #select-screen .topbar { height:clamp(48px, 9dvh, 70px); padding-inline:clamp(12px, 3vw, 28px); }
+  #select-screen .select-layout { height:calc(100% - clamp(48px, 9dvh, 70px)); padding:clamp(8px, 2dvh, 24px) clamp(18px, 5vw, 7vw) clamp(10px, 2dvh, 32px); }
+  #select-screen .character-figure { height:min(62dvh, 520px); }
+  #select-screen .setup-panel { gap:clamp(8px, 1.8dvh, 20px); padding-block:clamp(8px, 1.5dvh, 18px); }
+
+  #game-screen { inset:0; }
+  #game-screen .game-board { inset:6px 8px 6px; }
+  #game-screen .action-bar { left:8px; right:8px; bottom:6px; border-radius:4px; padding-left:max(8px, env(safe-area-inset-left)); padding-right:max(8px, env(safe-area-inset-right)); }
+  #game-screen .game-header { left:8px; right:8px; }
+}
+
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 480px) {
+  #login-screen .brand-lockup { transform:translateY(-4px); }
+  #login-screen .moon-mark { width:58px; height:58px; }
+  #login-screen .brand-lockup h1 { font-size:36px; margin-top:5px; }
+  #login-screen .brand-lockup .eyebrow { margin:3px 0; }
+  #login-screen .subtitle { margin:3px 0 6px; }
+  #login-screen .login-actions { gap:4px; }
+  #login-screen .name-field input { padding:4px; }
+  #login-screen .login-actions button { min-height:36px; }
+}
