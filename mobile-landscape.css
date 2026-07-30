@@ -1,6 +1,29 @@
 /* Phone play is intentionally landscape: portrait protects the game from cramped controls. */
 #orientation-lock { display:none; }
 
+/* Runtime fallback for browsers that do not update the orientation media
+   query reliably after rotating or opening browser chrome. */
+html.orientation-required #app,
+html.orientation-required #sky,
+html.orientation-required dialog,
+html.orientation-required .effect-result { visibility:hidden; }
+html.orientation-required #orientation-lock {
+  position:fixed;
+  z-index:9999;
+  inset:0;
+  display:grid;
+  place-content:center;
+  justify-items:center;
+  gap:12px;
+  padding:max(28px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  color:#edf0df;
+  text-align:center;
+  background:radial-gradient(circle at 50% 28%, #284d42 0, #10241f 30%, #07100f 72%);
+}
+html.orientation-required .orientation-moon { width:74px; aspect-ratio:1; border-radius:50%; background:#edf0df; box-shadow:0 0 0 12px rgba(201,169,107,.1), 0 0 46px rgba(223,234,220,.42); }
+html.orientation-required #orientation-lock strong { font-size:22px; font-weight:500; }
+html.orientation-required #orientation-lock p { margin:0; color:#c5d2ca; font-size:14px; }
+
 @media (pointer: coarse) {
   html, body { min-height:100%; overscroll-behavior:none; }
   #app, #sky { inset:0; }
@@ -130,4 +153,68 @@
   #login-screen .login-actions { gap:4px; }
   #login-screen .name-field input { padding:4px; }
   #login-screen .login-actions button { min-height:36px; }
+}
+
+/* Final cross-screen mobile pass. These rules intentionally come last so
+   the older width-only mobile rules cannot make a landscape phone taller. */
+@media (pointer: coarse) and (orientation: landscape) {
+  .screen { overflow:hidden; }
+  .topbar { padding-top:max(4px, env(safe-area-inset-top)); padding-bottom:4px; }
+  .profile-copy small,
+  .home-court-status,
+  #home-screen .home-session span:nth-child(3),
+  #select-screen .character-trait { display:none; }
+
+  /* Home: keep the character, primary action and account button visible while
+     removing decorative height that is not useful on a short phone screen. */
+  #home-screen .topbar { height:clamp(48px, 10dvh, 64px); }
+  #home-screen .courtyard { top:clamp(48px, 10dvh, 64px); bottom:0; }
+  #home-screen .distant-moon { width:clamp(110px, 25dvh, 210px); top:clamp(8px, 3dvh, 28px); left:66%; }
+  #home-screen .mountains { bottom:20%; height:25%; }
+  #home-screen .lake { height:29%; }
+  #home-screen .table-silhouette { bottom:3%; width:min(58vw, 600px); height:min(18vw, 120px); opacity:.45; }
+  #home-screen .home-character-stage { left:clamp(18px, 7vw, 110px); top:clamp(66px, 15dvh, 120px); width:clamp(180px, 27vw, 330px); }
+  #home-screen .home-seat-scene { transform:scale(.58); transform-origin:50% 100%; margin-bottom:clamp(-160px, -12dvh, -58px); }
+  #home-screen .home-character-caption { width:clamp(140px, 18vw, 210px); margin-top:clamp(-32px, -4dvh, -12px); padding:7px; }
+  #home-screen .home-character-caption strong { font-size:clamp(16px, 3dvh, 24px); }
+  #home-screen .home-command { top:clamp(78px, 17dvh, 140px); right:clamp(18px, 6vw, 90px); width:min(43vw, 520px); }
+  #home-screen .home-command h2 { font-size:clamp(24px, 5dvh, 40px); line-height:1.15; margin:0; }
+  #home-screen .home-command > p { margin:clamp(5px, 1dvh, 12px) 0 0; font-size:clamp(10px, 1.8dvh, 13px); line-height:1.45; }
+  #home-screen .home-session { margin-top:clamp(5px, 1.5dvh, 12px); gap:clamp(4px, 1vw, 10px); font-size:9px; }
+  #home-screen .start-orbit { width:clamp(180px, 25vw, 280px); height:clamp(54px, 10dvh, 76px); margin-top:clamp(7px, 1.5dvh, 16px); }
+  #home-screen .start-orbit span { font-size:clamp(14px, 2.8dvh, 18px); }
+  #home-screen .start-orbit small { font-size:9px; }
+
+  /* Selection: fit both columns inside the visible height and keep the
+     confirmation button reachable without page scrolling. */
+  #select-screen .topbar { height:clamp(44px, 9dvh, 62px); }
+  #select-screen .select-layout { height:calc(100% - clamp(44px, 9dvh, 62px)); grid-template-columns:minmax(0, 1fr) minmax(250px, 34vw); gap:clamp(12px, 3vw, 48px); overflow:hidden; }
+  #select-screen .character-stage { grid-template-columns:32px 1fr 32px; min-width:0; }
+  #select-screen .character-figure { width:min(32vw, 300px); height:min(66dvh, 430px); }
+  #select-screen .character-figure span { width:clamp(78px, 14dvh, 120px); height:clamp(86px, 16dvh, 132px); font-size:clamp(28px, 5dvh, 44px); }
+  #select-screen .character-arrow { font-size:clamp(34px, 8dvh, 56px); }
+  #select-screen .character-info { left:clamp(34px, 5vw, 90px); bottom:clamp(8px, 2dvh, 20px); }
+  #select-screen .character-info h2 { font-size:clamp(24px, 5dvh, 42px); margin:2px 0; }
+  #select-screen .setup-panel { min-width:0; max-height:100%; overflow:auto; gap:clamp(6px, 1.4dvh, 16px); padding:clamp(8px, 1.5dvh, 16px); }
+  #select-screen .setup-panel .skill-line { padding:clamp(7px, 1.4dvh, 14px) 0; }
+  #select-screen .setup-panel .segmented button { height:clamp(32px, 6dvh, 40px); padding-inline:6px; font-size:11px; }
+  #select-screen #confirm-seat { min-height:44px; }
+
+  /* Result, drawers and dialogs use the visible dynamic viewport, not the
+     potentially taller browser layout viewport. */
+  #result-screen { padding:clamp(8px, 2dvh, 24px) 16px; overflow:auto; }
+  #result-screen .result-moon { width:clamp(48px, 10dvh, 90px); height:clamp(48px, 10dvh, 90px); }
+  #result-screen .eyebrow { margin:clamp(4px, 1dvh, 10px); font-size:10px; }
+  #result-screen h2 { font-size:clamp(24px, 5dvh, 42px); margin:4px; }
+  #result-screen .ranking { width:min(620px, 88vw); margin:clamp(6px, 1.5dvh, 16px) auto; gap:2px; }
+  #result-screen .rank-row { padding:clamp(5px, 1dvh, 10px) 10px; }
+  #result-screen .result-actions { margin-top:clamp(8px, 1.5dvh, 18px); }
+  dialog { max-height:calc(100dvh - max(16px, env(safe-area-inset-top)) - max(16px, env(safe-area-inset-bottom))); max-width:calc(100vw - 24px); padding:clamp(16px, 3dvh, 28px); overflow:auto; }
+  .skill-dialog, #side-panel, #round-dialog, .tutorial-dialog, .covenant-dialog { width:min(680px, calc(100vw - 24px)); max-height:calc(100dvh - 24px); }
+  .dialog-close { min-width:44px; min-height:44px; }
+  .tutorial-dialog h2, .skill-dialog h2 { font-size:clamp(20px, 4dvh, 32px); }
+  .tutorial-demo { min-height:clamp(64px, 14dvh, 110px); margin:clamp(8px, 1.5dvh, 16px) 0; }
+  .tutorial-actions { flex-wrap:wrap; }
+  .tutorial-actions button, .skill-dialog button { min-height:44px; }
+  #side-panel { inset-inline-start:auto; inset-inline-end:8px; }
 }
