@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="imperial-theme.css?v=2">
   <link rel="stylesheet" href="skill-effects.css?v=2">
   <link rel="stylesheet" href="premium-ui.css?v=3">
-  <link rel="stylesheet" href="mobile-landscape.css?v=5">
+  <link rel="stylesheet" href="mobile-landscape.css?v=6">
 </head>
 <body>
   <canvas id="sky" aria-hidden="true"></canvas>
@@ -147,7 +147,7 @@
       <header class="game-header">
         <div><small id="phase-name">朔月</small><strong>第 <span id="round-number">1</span> / 8 回</strong><span class="moon-limit" id="moon-limit"></span><span class="risk-status" id="risk-status"></span></div>
         <div class="phase-moon" id="phase-moon"><i></i></div>
-        <div class="game-tools"><button class="tool-button compact immersive-toggle" id="game-immersive-toggle" title="进入沉浸模式" aria-label="进入沉浸模式">⛶</button><button class="tool-button compact theme-quick-toggle" id="theme-quick-toggle" title="切换牌局主题" aria-label="切换原有月庭与宫灯漆金主题">漆</button><button class="tool-button compact" id="speed-quick-toggle" title="切换对局节奏" aria-label="切换对局节奏">标</button><button class="tool-button" id="tutorial-open">新手</button><button class="tool-button compact intel-open" id="intel-open" title="查看本回合已知情报" hidden>情报</button><button class="tool-button compact" id="ledger-open" title="查看全部牌力">牌力</button><button class="icon-button" id="view-toggle" title="切换俯视" aria-label="切换俯视">◎</button><button class="icon-button" id="game-exit" title="返回月庭" aria-label="返回月庭">×</button></div>
+        <div class="game-tools"><button class="tool-button compact" id="speed-quick-toggle" title="切换对局节奏" aria-label="切换对局节奏">标</button><button class="tool-button tutorial-button" id="tutorial-open">新手</button><button class="tool-button compact intel-open" id="intel-open" title="查看本回合已知情报" hidden>情报</button><button class="tool-button compact" id="ledger-open" title="查看全部牌力">牌力</button><button class="icon-button" id="game-exit" title="返回月庭" aria-label="返回月庭">×</button></div>
       </header>
       <div class="announcement" id="announcement"></div>
       <div class="effect-result" id="effect-result" role="status" aria-live="polite"><strong id="effect-result-title"></strong><span id="effect-result-detail"></span></div>
@@ -227,7 +227,7 @@
   <script src="game-rules.js?v=4"></script>
   <script src="game-ai.js?v=3"></script>
   <script src="game-runtime.js?v=1"></script>
-  <script src="game.js?v=16"></script>
+  <script src="game.js?v=17"></script>
   <script src="motion-effects.js?v=2"></script>
 </body>
 </html>

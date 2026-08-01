@@ -181,8 +181,8 @@ html.orientation-required #orientation-rotate { min-width:168px; min-height:46px
   #home-screen .mountains { bottom:20%; height:25%; }
   #home-screen .lake { height:29%; }
   #home-screen .table-silhouette { bottom:3%; width:min(58vw, 600px); height:min(18vw, 120px); opacity:.45; }
-  #home-screen .home-character-stage { left:clamp(18px, 7vw, 110px); top:clamp(46px, 8dvh, 82px); width:clamp(180px, 27vw, 330px); transform:translateY(clamp(-92px, -10dvh, -38px)); }
-  #home-screen .home-seat-scene { transform:scale(.48); transform-origin:50% 100%; margin-bottom:clamp(-130px, -10dvh, -48px); }
+  #home-screen .home-character-stage { left:clamp(18px, 7vw, 110px); top:clamp(34px, 6dvh, 62px); width:clamp(180px, 27vw, 330px); transform:translateY(clamp(-132px, -15dvh, -72px)); }
+  #home-screen .home-seat-scene { transform:translateY(clamp(-110px, -12dvh, -58px)) scale(.52); transform-origin:50% 50%; margin-bottom:clamp(-165px, -15dvh, -86px); }
   #home-screen .home-character-caption { width:clamp(140px, 18vw, 210px); margin-top:clamp(-32px, -4dvh, -12px); padding:7px; }
   #home-screen .home-character-caption strong { font-size:clamp(16px, 3dvh, 24px); }
   #home-screen .home-command { top:clamp(78px, 17dvh, 140px); right:clamp(18px, 6vw, 90px); width:min(43vw, 520px); }
@@ -268,8 +268,8 @@ html.orientation-required #orientation-rotate { min-width:168px; min-height:46px
 
   /* Skill cinema art is deliberately subordinate to its title and result
      text on phone. The effect still fills the stage without hiding it. */
-  .skill-cinema-art { width:220px; height:220px; scale:.62; }
-  .skill-cinema-copy { min-width:220px; transform:translate(-50%,70px); }
+  .skill-cinema-art { width:330px; height:330px; scale:.58; }
+  .skill-cinema-copy { min-width:220px; transform:translate(-50%,82px); }
   .skill-cinema-copy span { font-size:10px; }
   .skill-cinema-copy strong { font-size:clamp(27px, 6dvh, 40px); margin:3px 0; }
   .skill-cinema-copy small { font-size:11px; }
@@ -294,4 +294,50 @@ html.orientation-required #orientation-rotate { min-width:168px; min-height:46px
   #game-screen .public-card .power-corner { right:7px; top:6px; color:#092f27; font-size:clamp(17px, 3.4dvh, 23px); font-weight:800; text-shadow:0 1px 0 #fff8d5; }
   #game-screen .public-card .card-name { font-size:clamp(15px, 3dvh, 20px); font-weight:700; text-shadow:0 1px 0 #fff8d5; }
   #game-screen .public-card .date { font-size:clamp(9px, 1.8dvh, 12px); font-weight:700; }
+
+  /* Mobile match HUD: fixed overhead view and a compact, transparent tool row. */
+  #game-screen .game-header {
+    background:linear-gradient(180deg, rgba(3,10,8,.52), rgba(3,10,8,.12) 70%, transparent);
+    border:0;
+    box-shadow:none;
+    backdrop-filter:none;
+  }
+  #game-screen .game-tools { right:max(12px, env(safe-area-inset-right)); left:auto; max-width:none; overflow:visible; gap:5px; }
+  #game-screen .game-tools .tool-button,
+  #game-screen .game-tools .icon-button { background:rgba(5,16,13,.46); box-shadow:none; }
+  #game-screen #tutorial-open { display:inline-grid; place-items:center; width:48px; min-width:48px; font-size:11px !important; letter-spacing:0; color:#f5dda0; }
+
+  /* All seat skill badges return to the original circular, symmetric token. */
+  #game-screen .character-skill-badge {
+    display:grid;
+    place-items:center;
+    width:34px;
+    min-width:34px;
+    height:34px;
+    aspect-ratio:1;
+    padding:0;
+    border-radius:50%;
+    box-sizing:border-box;
+    line-height:1;
+    transform:none;
+  }
+
+  /* Character skills must fit without vertical scrolling on a phone. */
+  #character-skill-dialog {
+    width:min(700px, 84vw);
+    max-height:calc(100dvh - 16px);
+    padding:9px 14px 11px;
+    overflow:hidden;
+  }
+  #character-skill-dialog .eyebrow { display:none; }
+  #character-skill-dialog h2 { margin:0 0 4px; font-size:clamp(18px, 3.6dvh, 24px); }
+  #character-skill-dialog #character-skill-art { max-height:none; margin:3px 0; overflow:visible; }
+  #character-skill-dialog .skill-symbol { width:48px; height:48px; margin:2px auto; border-radius:50%; font-size:25px; }
+  #character-skill-dialog #character-skill-description { margin:3px auto; max-width:76ch; font-size:11px; line-height:1.35; }
+  #character-skill-dialog .character-skill-state { margin:3px 0; font-size:11px; }
+  #character-skill-dialog .skill-target-list { grid-template-columns:repeat(3, minmax(0, 1fr)); gap:5px; margin:5px 0; }
+  #character-skill-dialog .skill-target-list button { min-height:38px; padding:5px 7px; font-size:11px; }
+  #character-skill-dialog .skill-actions { gap:6px; margin-top:5px; }
+  #character-skill-dialog .skill-actions button { min-height:40px; }
+  #character-skill-dialog .borrow-moon-control { margin:5px 0; padding:8px 10px; }
 }

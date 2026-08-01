@@ -351,4 +351,8 @@ node --check game.js
 - `mobile-landscape.css` 必须同时适配登录页、选角页和牌局页；使用 `dvh`、安全区和基于可用高度的 `clamp()`，避免只缩放牌桌而让首页标题或底部控件溢出。移动端组件四周至少保留 6-8px 内边距。
 - 横屏提示不能只依赖 CSS `orientation` 媒体查询；`orientation-support.js` 必须使用 `visualViewport`/`innerWidth` 与 `innerHeight` 运行时判断，并监听 `resize`、`orientationchange`，兼容 iPhone Safari 和 Android WebView。
 - 手机网页提供应用内“进入沉浸模式”按钮，必须在用户点击后请求 Fullscreen API；不能声称网页能无权限强制隐藏 iOS Safari 浏览器栏。全屏状态变化后重新应用 `visualViewport` 布局。
+- 手机牌桌固定使用俯视视角，不再提供俯视切换按钮。游戏内不显示全屏和主题切换；全屏入口保留在首页/横屏提示，主题只在角色选择界面设置。
+- 手机牌桌顶栏使用透明背景，右上角仅保留速度、新手、按需出现的情报、牌力和退出；“新手”必须完整可见。座位技能徽记保持 34px 圆形对称。
+- 手机角色技能面板必须在一屏内显示全部目标框；封月目标使用三列两行，技能图案、说明和按钮按 `dvh` 压缩。技能影院继续使用正方形画布缩放，禁止把封月图形压成横向椭圆。
+- 手机月庭首页的椅子与面具场景必须整体上提，低高度浏览器视口中仍需露出完整面具和主要椅背。
 - GitHub 发布由维护者手动完成，遵循 `GITHUB-WORKFLOW.md`；不要自动执行 commit、push 或远程仓库写操作。
